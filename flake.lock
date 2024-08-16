@@ -2294,6 +2294,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-2405": {
+      "locked": {
+        "lastModified": 1723688146,
+        "narHash": "sha256-sqLwJcHYeWLOeP/XoLwAtYjr01TISlkOfz+NG82pbdg=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "c3d4ac725177c030b1e289015989da2ad9d56af0",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-24.05",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs-darwin": {
       "locked": {
         "lastModified": 1723697496,
@@ -3277,6 +3293,7 @@
         "nixos-licheepi4a": "nixos-licheepi4a_2",
         "nixos-rk3588": "nixos-rk3588_2",
         "nixpkgs": "nixpkgs_19",
+        "nixpkgs-2405": "nixpkgs-2405",
         "nixpkgs-stable": "nixpkgs-stable_9",
         "nixpkgs-unstable": "nixpkgs-unstable_3",
         "nuenv": "nuenv_3",

@@ -1,5 +1,6 @@
 {
   nixpkgs,
+  nixpkgs-2405,
   myvars,
   mylib,
   mynixcfg,
@@ -21,7 +22,10 @@
       autostart = true;
       restartIfChanged = true;
 
-      specialArgs = {inherit myvars mylib daeuniverse agenix mysecrets mynixcfg mynixcfg-v055 nixpkgs nuenv;};
+      specialArgs = {
+        inherit myvars mylib daeuniverse agenix mysecrets mynixcfg mynixcfg-v055 nuenv;
+        nixpkgs = nixpkgs-2405;
+      };
 
       config.imports = [./suzi];
     };
@@ -30,7 +34,10 @@
       autostart = true;
       restartIfChanged = true;
 
-      specialArgs = {inherit myvars mylib mynixcfg nixpkgs nuenv;};
+      specialArgs = {
+        inherit myvars mylib mynixcfg nuenv;
+        nixpkgs = nixpkgs-2405;
+      };
 
       config.imports = [./mitsuha];
     };
