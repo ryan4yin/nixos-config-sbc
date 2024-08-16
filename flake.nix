@@ -75,10 +75,8 @@
 
     ########################  My own repositories  #########################################
 
-    # May 5, 2024 - NixOS 23.11
-    mynixcfg.url = "github:ryan4yin/nix-config/87c041f8b48ae74777598a168a294af6a3f874b7";
     # refer vars from the main branch
-    mynixcfg-vars.url = "github:ryan4yin/nix-config/main";
+    mynixcfg.url = "github:ryan4yin/nix-config/main";
 
     # my private secrets, it's a private repository, you need to replace it with your own.
     # use ssh protocol to authenticate via ssh-agent/ssh-key, and shallow clone to save time
