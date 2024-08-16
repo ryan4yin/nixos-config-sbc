@@ -10,6 +10,19 @@
 
   outputs = inputs: import ./outputs inputs;
 
+  # the nixConfig here only affects the flake itself, not the system configuration!
+  # for more information, see:
+  #     https://nixos-and-flakes.thiscute.world/nix-store/add-binary-cache-servers
+  nixConfig = {
+    # substituers will be appended to the default substituters when fetching packages
+    extra-substituters = [
+      "https://daeuniverse.cachix.org"
+    ];
+    extra-trusted-public-keys = [
+      "daeuniverse.cachix.org-1:8hRIzkQmAKxeuYY3c/W1I7QbZimYphiPX/E7epYNTeM="
+    ];
+  };
+
   # This is the standard format for flake.nix. `inputs` are the dependencies of the flake,
   # Each item in `inputs` will be passed as a parameter to the `outputs` function after being pulled and built.
   inputs = {
@@ -44,9 +57,9 @@
     # secrets management
     agenix = {
       # lock with git commit at 0.15.0
-      # url = "github:ryantm/agenix/564595d0ad4be7277e07fa63b5a991b3c645655d";
+      url = "github:ryantm/agenix/564595d0ad4be7277e07fa63b5a991b3c645655d";
       # replaced with a type-safe reimplementation to get a better error message and less bugs.
-      url = "github:ryan4yin/ragenix";
+      # url = "github:ryan4yin/ragenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -68,6 +81,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    daeuniverse.url = "github:daeuniverse/flake.nix";
+    # daeuniverse.url = "github:daeuniverse/flake.nix/exp";
+
     microvm = {
       url = "github:astro/microvm.nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -77,6 +93,7 @@
 
     # refer vars from the main branch
     mynixcfg.url = "github:ryan4yin/nix-config/main";
+    mynixcfg-v055.url = "github:ryan4yin/nix-config/v0.5.5";
 
     # my private secrets, it's a private repository, you need to replace it with your own.
     # use ssh protocol to authenticate via ssh-agent/ssh-key, and shallow clone to save time

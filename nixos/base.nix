@@ -1,19 +1,19 @@
 {
   pkgs,
+  mynixcfg,
   myvars,
   nuenv,
   nixpkgs,
   lib,
   ...
 } @ args: {
-  nixpkgs.overlays =
-    [
-      nuenv.overlays.default
-    ];
+  nixpkgs.overlays = [
+    nuenv.overlays.default
+  ];
 
   # Add my private PKI's CA certificate to the system-wide trust store.
   security.pki.certificateFiles = [
-    ../certs/ecc-ca.crt
+    "${mynixcfg}/certs/ecc-ca.crt"
   ];
 
   # auto upgrade nix to the unstable version

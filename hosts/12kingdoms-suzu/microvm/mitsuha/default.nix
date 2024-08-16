@@ -2,9 +2,9 @@
   imports =
     (mylib.scanPaths ./.)
     ++ [
-      ../../../../modules/nixos/base/ssh.nix
-      ../../../../modules/nixos/base/user-group.nix
-      ../../../../modules/base.nix
+      ../../../../nixos/base/ssh.nix
+      ../../../../nixos/base/user-group.nix
+      ../../../../nixos/base.nix
     ];
 
   microvm = {
