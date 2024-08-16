@@ -51,6 +51,7 @@
       directories = [
         "codes"
         "nix-config"
+        "nixos-config-sbc"
         "tmp"
 
         {
