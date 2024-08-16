@@ -18,7 +18,7 @@
   modules = {
     nixos-modules =
       (map mylib.relativeToRoot [
-        "modules/nixos/server/server-riscv64.nix"
+        "nixos/server/server-riscv64.nix"
         # host specific modules
         "hosts/rolling-girls-${name}"
       ])

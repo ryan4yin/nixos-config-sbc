@@ -1,5 +1,5 @@
 {
-  description = "Ryan Yin's nix configuration for both NixOS & macOS";
+  description = "Ryan Yin's nix configuration for aarch64 and riscv64 SBCs";
 
   ##################################################################################################################
   #
@@ -21,11 +21,11 @@
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable-small";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-23.11";
 
-    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+    # nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
     # home-manager, used for managing user configuration
     home-manager = {
-      url = "github:nix-community/home-manager/23.11";
+      url = "github:nix-community/home-manager/release-23.11";
       # url = "github:nix-community/home-manager/release-23.11";
 
       # The `follows` keyword in inputs is used for inheritance.
@@ -63,9 +63,6 @@
 
     nuenv.url = "github:DeterminateSystems/nuenv";
 
-    daeuniverse.url = "github:daeuniverse/flake.nix";
-    # daeuniverse.url = "github:daeuniverse/flake.nix/exp";
-
     haumea = {
       url = "github:nix-community/haumea/v0.2.2";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -80,6 +77,8 @@
 
     # May 5, 2024 - NixOS 23.11
     mynixcfg.url = "github:ryan4yin/nix-config/87c041f8b48ae74777598a168a294af6a3f874b7";
+    # refer vars from the main branch
+    mynixcfg-vars.url = "github:ryan4yin/nix-config/main";
 
     # my private secrets, it's a private repository, you need to replace it with your own.
     # use ssh protocol to authenticate via ssh-agent/ssh-key, and shallow clone to save time

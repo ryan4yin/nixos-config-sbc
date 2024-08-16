@@ -18,13 +18,11 @@
   modules = {
     nixos-modules =
       (map mylib.relativeToRoot [
-        "secrets/nixos.nix"
-        "modules/nixos/server/server-aarch64.nix"
+        "nixos/server/server-aarch64.nix"
         # host specific modules
         "hosts/12kingdoms-${name}"
       ])
       ++ [
-        {modules.secrets.server.network.enable = true;}
       ];
   };
 

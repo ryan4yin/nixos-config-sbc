@@ -1,16 +1,14 @@
 {
   self,
   mynixcfg,
+  mynixcfg-vars,
   nixpkgs,
   pre-commit-hooks,
   ...
 } @ inputs: let
   inherit (inputs.nixpkgs) lib;
-  mylib =
-    import "${mynixcfg}/lib" {inherit lib;}
-    # FIX: relative to this git repo instead of the upstream mynixcfg.
-    // {relativeToRoot = lib.path.append ../.;};
-  myvars = import "${mynixcfg}/vars" {inherit lib;};
+  mylib = import ../lib {inherit lib;};
+  myvars = import "${mynixcfg-vars}/vars" {inherit lib;};
 
   # Add my custom lib, vars, nixpkgs instance, and all the inputs to specialArgs,
   # so that I can use them in all my nixos/home-manager/darwin modules.
