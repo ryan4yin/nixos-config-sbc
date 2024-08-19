@@ -1,4 +1,4 @@
-{mylib, mynixcfg-v055, ...}: {
+{pkgs, mylib, mynixcfg-v055, ...}: {
   imports =
     (mylib.scanPaths ./.)
     ++ [
@@ -9,6 +9,9 @@
     ];
 
   modules.secrets.server.network.enable = true;
+  environment.systemPackages = with pkgs; [
+    neovim
+  ];
 
   microvm = {
     mem = 1024; # RAM allocation in MB

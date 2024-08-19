@@ -181,10 +181,12 @@ group {
 
         # Select the node with min average of the last 10 latencies from the group for every connection.
         policy: min_avg10
+	# https://github.com/daeuniverse/dae/blob/v0.7.0/config/desc.go
         # Other policies:
         #   random         - Randomly select a node from the group for every connection.
         #   fixed(0)       - Select the first node from the group for every connection.
         #   min            - Select the node with min last latency from the group for every connection.
+	#   min_avg10      - Select node by the average of latencies of last 10 checks.
         #   min_moving_avg - Select the node with min moving average of latencies from the group for every connection.
     }
 
@@ -209,10 +211,12 @@ group {
         policy: min_avg10
     }
 
-    proxy-random {
+    proxy-avoid-rate-limits {
         filter: name(keyword: 'UK')
         filter: name(keyword: '英国')
-        policy: random
+	# random - can avoid api rate limits, but the network access is very unstable
+	# min_avg10 - the network access is very stable, but may met api rate limits.
+        policy: min_moving_avg
     }
 
     sg {
@@ -278,8 +282,8 @@ routing {
     ### GitHub / Docker Hub
     ### randomly select a node from the group for every connection
     ### to avoid the rate limit of GitHub API and Docker Hub API
-    domain(geosite:github) -> proxy-random
-    domain(geosite:docker) -> proxy-random
+    domain(geosite:github) -> proxy-avoid-rate-limits
+    domain(geosite:docker) -> proxy-avoid-rate-limits
 
     ### OpenAI
     domain(geosite:openai) -> sg
