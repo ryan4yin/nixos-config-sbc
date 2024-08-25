@@ -1,11 +1,18 @@
-{pkgs, mylib, mynixcfg-v055, ...}: {
+{
+  pkgs,
+  mylib,
+  mynixcfg-v055,
+  ...
+}: {
   imports =
     (mylib.scanPaths ./.)
+    ++ (map mylib.relativeToRoot [
+      "nixos/base/ssh.nix"
+      "nixos/base/user-group.nix"
+      "nixos/base.nix"
+    ])
     ++ [
       "${mynixcfg-v055}/secrets/nixos.nix"
-      ../../../../nixos/base/ssh.nix
-      ../../../../nixos/base/user-group.nix
-      ../../../../nixos/base.nix
     ];
 
   modules.secrets.server.network.enable = true;

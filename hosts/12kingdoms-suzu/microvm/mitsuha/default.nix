@@ -1,11 +1,11 @@
 {mylib, ...}: {
   imports =
     (mylib.scanPaths ./.)
-    ++ [
-      ../../../../nixos/base/ssh.nix
-      ../../../../nixos/base/user-group.nix
-      ../../../../nixos/base.nix
-    ];
+    ++ (map mylib.relativeToRoot [
+      "nixos/base/ssh.nix"
+      "nixos/base/user-group.nix"
+      "nixos/base.nix"
+    ]);
 
   microvm = {
     mem = 1024; # RAM allocation in MB
