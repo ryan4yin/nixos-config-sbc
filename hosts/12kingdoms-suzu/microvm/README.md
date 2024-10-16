@@ -16,14 +16,15 @@ microvm -u my-microvm
 journalctl -u microvm@my-microvm -n 50
 
 # stop vm
-systemctl stop microvm@$NAME
+systemctl stop microvm@my-microvm
 
 # remove vm
-rm -rf /var/lib/microvms/$NAME
+rm -rf /var/lib/microvms/my-microvm
 
 # Run a MicroVM in foreground(for testing)
 # You have to stop the vm before running this command!
 microvm -r my-microvm
+# systemctl start microvm@my-microvm
 
 # Stop a MicroVM that is running in foreground
 ## 1. run `sudo shutdown -h now` in the vm
