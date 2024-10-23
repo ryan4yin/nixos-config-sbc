@@ -19,8 +19,14 @@ in {
     # forward network packets that are not destined for the interface on which they were received
     "net.ipv4.conf.all.forwarding" = true;
     "net.ipv6.conf.all.forwarding" = true;
-    "net.ipv4.conf.br-lan.rp_filter" = 1;
     "net.ipv4.conf.br-lan.send_redirects" = 0;
+
+    # security options
+    #   0 - No source validation.
+    #   1 - Strict mode as defined in RFC3704 Strict Reverse Path
+    #   2 - Loose mode as defined in RFC3704 Loose Reverse Path
+    "net.ipv4.conf.br-lan.rp_filter" = 0;
+    "net.ipv4.conf.wan.rp_filter" = 1;
   };
 
   # Docker uses iptables internally to setup NAT for containers.
