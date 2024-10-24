@@ -17,7 +17,7 @@ in {
     (mylib.scanPaths ./.)
     ++ [
       # import the rk3588 module, which contains the configuration for bootloader/kernel/firmware
-      nixos-rk3588.nixosModules.orangepi5plus.core
+      nixos-rk3588.nixosModules.boards.orangepi5plus.core
       disko.nixosModules.default
     ];
 
