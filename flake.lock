@@ -1757,10 +1757,10 @@
     "mysecrets_3": {
       "flake": false,
       "locked": {
-        "lastModified": 1727265836,
-        "narHash": "sha256-Jly16F91nkL59NSMcjdIaNZkp24mYknNxE22K7e/QCc=",
+        "lastModified": 1729773208,
+        "narHash": "sha256-6AQdk04nL51xlSBtCvX6WQ7TWQU/AiRWtVcjA0EPqZ4=",
         "ref": "refs/heads/main",
-        "rev": "76b5e0da6bdfdb08a216af177ab81254e40431bd",
+        "rev": "735c14fe0008caf0fa9dd0d0ddb370fc70ddca35",
         "shallow": true,
         "type": "git",
         "url": "ssh://git@github.com/ryan4yin/nix-secrets.git"
@@ -2222,11 +2222,11 @@
         "pre-commit-hooks": "pre-commit-hooks_6"
       },
       "locked": {
-        "lastModified": 1729580035,
-        "narHash": "sha256-UiDg39G8ewGbofFi7SBGU53YnxDIWp01Aan0r4Deth8=",
+        "lastModified": 1729772550,
+        "narHash": "sha256-NQEEXce5sWT/Jui5d2QPDhTim0TvFFxGwP1kpBBPOYM=",
         "owner": "ryan4yin",
         "repo": "nixos-rk3588",
-        "rev": "b95bb58af82e65af8f2ecdec829f74143958a49c",
+        "rev": "f4d9ab79b52e8835bde8063a72447c00975f417f",
         "type": "github"
       },
       "original": {
@@ -2564,11 +2564,11 @@
     },
     "nixpkgs-unstable_3": {
       "locked": {
-        "lastModified": 1729674553,
-        "narHash": "sha256-avsQc594jov0sLa64mhuEbBTZY+cUuNTnLudrt/0JQo=",
+        "lastModified": 1729717751,
+        "narHash": "sha256-iyIfBy/j3k7Zoop3/jAe0aEUNUdIetbr5mwX8YSW9Bg=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "c0915172d935f94d92abd5e0d048903446e22c42",
+        "rev": "eee954a451fa06ca47d392a99c9cb3abae2b25f4",
         "type": "github"
       },
       "original": {
@@ -2722,16 +2722,16 @@
     },
     "nixpkgs_19": {
       "locked": {
-        "lastModified": 1709309926,
-        "narHash": "sha256-VZFBtXGVD9LWTecGi6eXrE0hJ/mVB3zGUlHImUs2Qak=",
+        "lastModified": 1729256560,
+        "narHash": "sha256-/uilDXvCIEs3C9l73JTACm4quuHUsIHcns1c+cHUJwA=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "79baff8812a0d68e24a836df0a364c678089e2c7",
+        "rev": "4c2fcb090b1f3e5b47eaa7bd33913b574a11e0a0",
         "type": "github"
       },
       "original": {
         "owner": "NixOS",
-        "ref": "nixos-23.11",
+        "ref": "nixos-unstable",
         "repo": "nixpkgs",
         "type": "github"
       }
