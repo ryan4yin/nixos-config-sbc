@@ -207,6 +207,12 @@ group {
 
     ssh-proxy {
         filter: name(keyword: 'Hong Kong')
+        filter: name(keyword: '香港')
+        filter: name(keyword: 'USA') [add_latency: -500ms]
+        filter: name(keyword: '美国') [add_latency: -500ms]
+        filter: name(keyword: 'UK') [add_latency: -300ms]
+        filter: name(keyword: '英国') [add_latency: -300ms]
+
         policy: min_avg10
     }
 
@@ -299,6 +305,7 @@ routing {
 
     ### Media
     domain(geosite:netflix) -> media
+    domain(geosite:youtube) -> media
 
     ### Proxy
     domain(suffix: linkedin.com) -> proxy
