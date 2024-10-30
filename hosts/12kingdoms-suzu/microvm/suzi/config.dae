@@ -206,10 +206,7 @@ group {
     }
 
     ssh-proxy {
-        filter: name(keyword: 'UK')
-        filter: name(keyword: '英国')
-        filter: name(keyword: 'USA') [add_latency: -500ms]
-        filter: name(keyword: '美国') [add_latency: -500ms]
+        filter: name(keyword: 'Hong Kong')
         policy: min_avg10
     }
 
