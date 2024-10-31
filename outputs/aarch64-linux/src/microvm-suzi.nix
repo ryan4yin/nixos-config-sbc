@@ -23,6 +23,9 @@
       ++ [
         # this runs as a MicroVM
         inputs.microvm.nixosModules.microvm
+        {
+          networking.hostName = name;
+        }
       ];
   };
 
