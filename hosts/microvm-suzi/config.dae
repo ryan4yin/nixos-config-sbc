@@ -270,6 +270,18 @@ routing {
     dip(geoip:cn) -> direct
     domain(geosite:cn) -> direct
 
+    ### Direct
+    domain(regex:'.+\.edu\.cn$') -> direct
+    domain(keyword:'baidu') -> direct
+    domain(keyword:'bilibili') -> direct
+    domain(keyword:'taobao') -> direct
+    domain(keyword:'alibabadns') -> direct
+    domain(keyword:'alicdn') -> direct
+    domain(keyword:'tbcache') -> direct
+    domain(keyword:'zhihu') -> direct
+    domain(keyword:'douyu') -> direct
+    domain(geosite:cloudflare-cn) -> direct
+
     # Block ads
     domain(full:analytics.google.com) -> proxy  # do not block google analytics(console)
     domain(geosite:category-ads) -> block
@@ -329,18 +341,6 @@ routing {
     domain(geosite:category-dev) -> proxy
     domain(geosite:google-scholar) -> proxy
     domain(geosite:category-scholar-!cn) -> proxy
-
-    ### Direct
-    domain(regex:'.+\.edu\.cn$') -> direct
-    domain(keyword:'baidu') -> direct
-    domain(keyword:'bilibili') -> direct
-    domain(keyword:'taobao') -> direct
-    domain(keyword:'alibabadns') -> direct
-    domain(keyword:'alicdn') -> direct
-    domain(keyword:'tbcache') -> direct
-    domain(keyword:'zhihu') -> direct
-    domain(keyword:'douyu') -> direct
-    domain(geosite:cloudflare-cn) -> direct
 
     # --- Fallback rules ---#
 
