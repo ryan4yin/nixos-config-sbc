@@ -29,11 +29,15 @@
     # There are many ways to reference flake inputs. The most widely used is github:owner/name/reference,
     # which represents the GitHub repository URL + branch/commit-id/tag.
 
-    # Official NixOS package source, using nixos's unstable branch by default
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-23.11";
-    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable-small";
-    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-23.11";
-    nixpkgs-2405.url = "github:nixos/nixpkgs/nixos-24.05";
+    # Used only as colmena's default nixpkgs, will be overwritten in each host by colmenaMeta.nodeNixpkgs
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.05";
+    # used only by `pkgs-unstable`, for some packages.
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    # unsed only by `pkgs-stable`, for some packages.
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
+
+    # Used as microvm's nixpkgs
+    nixpkgs-microvm.url = "github:nixos/nixpkgs/nixos-unstable";
 
     # nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 

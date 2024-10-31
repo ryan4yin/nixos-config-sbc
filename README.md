@@ -10,6 +10,22 @@ It is troublesome to update nixpkgs on aarch64/riscv64 SBCs, which can easily ca
 such as kernel compilation failure and boot failure caused by uboot/edk2 incompatibility. So it
 feels like a good idea to create separate flakes for SBCs and have them updated separately.
 
+
+## Usage
+
+```bash
+# deploy microvms
+just vm mitsuha
+just vm suzi
+
+# deploy microvms & its host machine
+just suzu-local # locally
+just col suzu   # remotely
+
+# deploy other hosts remotely
+just col xxx
+```
+
 ## References
 
 - [ryan4yin/nix-config](https://github.com/ryan4yin/nix-config/)

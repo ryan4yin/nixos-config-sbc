@@ -5,6 +5,7 @@
 
   ipv4WithMask = "${ipv4}/24";
 in {
+  networking.nftables.enable = true;
   systemd.network.enable = true;
 
   systemd.network.networks."20-lan" = {
