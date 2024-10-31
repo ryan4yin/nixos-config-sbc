@@ -1,6 +1,5 @@
 {
-  nixpkgs,
-  nixpkgs-2405,
+  nixpkgs-microvm,
   myvars,
   mylib,
   mynixcfg,
@@ -24,7 +23,7 @@
 
       specialArgs = {
         inherit myvars mylib daeuniverse agenix mysecrets mynixcfg mynixcfg-v055 nuenv;
-        nixpkgs = nixpkgs-2405;
+        nixpkgs = nixpkgs-microvm;
       };
 
       config.imports = [./suzi];
@@ -36,7 +35,7 @@
 
       specialArgs = {
         inherit myvars mylib mynixcfg nuenv;
-        nixpkgs = nixpkgs-2405;
+        nixpkgs = nixpkgs-microvm;
       };
 
       config.imports = [./mitsuha];
