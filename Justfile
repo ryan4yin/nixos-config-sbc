@@ -87,6 +87,18 @@ gcroot:
 col tag:
   colmena apply --on '@{{tag}}' --verbose --show-trace
 
+[linux]
+[group('homelab')]
+vm hostname:
+  # build the vm on the host
+  nix run .#nixosConfigurations.{{hostname}}.config.microvm.deploy.installOnHost root@suzu
+
+  # update the vm via restart it on the host
+  # ssh root@suzu systemctl restart microvm@{{hostname}}
+
+  # or switch to the new version in the vm
+  nix run .#nixosConfigurations.{{hostname}}.config.microvm.deploy.sshSwitch root@{{hostname}} switch
+
 ############################################################################
 #
 #  RISC-V related commands

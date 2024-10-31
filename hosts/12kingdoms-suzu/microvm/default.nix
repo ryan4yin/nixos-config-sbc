@@ -26,7 +26,7 @@
         nixpkgs = nixpkgs-microvm;
       };
 
-      config.imports = [./suzi];
+      config.imports = [../../microvm-suzi];
     };
 
     mitsuha = {
@@ -38,7 +38,7 @@
         nixpkgs = nixpkgs-microvm;
       };
 
-      config.imports = [./mitsuha];
+      config.imports = [../../microvm-mitsuha];
     };
   };
 }

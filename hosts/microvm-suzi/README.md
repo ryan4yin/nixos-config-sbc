@@ -3,7 +3,7 @@
 A router(IPv4 only) with a transparent proxy to bypass the G|F|W.
 
 NOTE: dae do not provides a http/socks5 proxy server, so a v2ray server is running on
-[idols_kana](../idols_kana/proxy.nix) to provides a http/socks5 proxy service.
+another host to provides a http/socks5 proxy service.
 
 ## Troubleshooting
 
