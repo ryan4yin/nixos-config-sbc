@@ -30,11 +30,11 @@
     # which represents the GitHub repository URL + branch/commit-id/tag.
 
     # Used only as colmena's default nixpkgs, will be overwritten in each host by colmenaMeta.nodeNixpkgs
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
     # used only by `pkgs-unstable`, for some packages.
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     # unsed only by `pkgs-stable`, for some packages.
-    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.11";
 
     # Used as microvm's nixpkgs
     nixpkgs-microvm.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -43,8 +43,8 @@
 
     # home-manager, used for managing user configuration
     home-manager = {
-      url = "github:nix-community/home-manager/release-23.11";
-      # url = "github:nix-community/home-manager/release-23.11";
+      url = "github:nix-community/home-manager/release-24.11";
+      # url = "github:nix-community/home-manager/release-24.11";
 
       # The `follows` keyword in inputs is used for inheritance.
       # Here, `inputs.nixpkgs` of home-manager is kept consistent with the `inputs.nixpkgs` of the current flake,
@@ -69,7 +69,7 @@
     };
 
     disko = {
-      url = "github:nix-community/disko/v1.6.1";
+      url = "github:nix-community/disko/v1.11.0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
