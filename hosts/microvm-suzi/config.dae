@@ -280,6 +280,7 @@ routing {
     domain(keyword:'tbcache') -> direct
     domain(keyword:'zhihu') -> direct
     domain(keyword:'douyu') -> direct
+    domain(keyword:'deepseek.com') -> direct
     domain(geosite:cloudflare-cn) -> direct
 
     # Block ads
