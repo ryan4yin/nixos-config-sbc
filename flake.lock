@@ -954,21 +954,6 @@
         "type": "github"
       }
     },
-    "impermanence_2": {
-      "locked": {
-        "lastModified": 1737831083,
-        "narHash": "sha256-LJggUHbpyeDvNagTUrdhe/pRVp4pnS6wVKALS782gRI=",
-        "owner": "nix-community",
-        "repo": "impermanence",
-        "rev": "4b3e914cdf97a5b536a889e939fb2fd2b043a170",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-community",
-        "repo": "impermanence",
-        "type": "github"
-      }
-    },
     "lanzaboote": {
       "inputs": {
         "crane": "crane",
@@ -1042,7 +1027,7 @@
         "ghostty": "ghostty",
         "haumea": "haumea_2",
         "home-manager": "home-manager_3",
-        "impermanence": "impermanence_2",
+        "impermanence": "impermanence",
         "lanzaboote": "lanzaboote",
         "mysecrets": "mysecrets",
         "nix-darwin": "nix-darwin",
@@ -2133,12 +2118,26 @@
         "type": "github"
       }
     },
+    "preservation": {
+      "locked": {
+        "lastModified": 1757436102,
+        "narHash": "sha256-mMI9IanU+Xw+pVogD2oT0I2kTmvz2Un/Apc5+CwUpEY=",
+        "owner": "nix-community",
+        "repo": "preservation",
+        "rev": "93416f4614ad2dfed5b0dcf12f27e57d27a5ab11",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "preservation",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "disko": "disko",
         "haumea": "haumea",
         "home-manager": "home-manager",
-        "impermanence": "impermanence",
         "microvm": "microvm",
         "mynixcfg": "mynixcfg",
         "nixos-licheepi4a": "nixos-licheepi4a",
@@ -2146,7 +2145,8 @@
         "nixpkgs": "nixpkgs_12",
         "nixpkgs-microvm": "nixpkgs-microvm",
         "nuenv": "nuenv_2",
-        "pre-commit-hooks": "pre-commit-hooks_5"
+        "pre-commit-hooks": "pre-commit-hooks_5",
+        "preservation": "preservation"
       }
     },
     "rust-overlay": {
