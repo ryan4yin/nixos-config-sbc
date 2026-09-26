@@ -10,8 +10,8 @@ nixpkgs can be pinned/bumped without breaking kernels/uboot.
 must be on PATH: `nix shell nixpkgs#just nixpkgs#nushell`.
 
 - `just test` - run eval tests (`nix eval .#evalTests`). This is the CI check. Run it after edits.
-- `just fmt` - format `.nix` files with nixfmt (RFC 166 style, width 100). `nix fmt` also works
-  (the `formatter` output exists for `x86_64-linux` too), but pass files explicitly.
+- `just fmt` - format `.nix` files with nixfmt (RFC 166 style, width 100). `nix fmt` also works (the
+  `formatter` output exists for `x86_64-linux` too), but pass files explicitly.
 - `nix develop` - dev shell; its shellHook installs pre-commit hooks (nixfmt, typos --write,
   prettier --write).
 - `just col <tag> [mode]` / `just riscv|nozomi|yukina` - deploy via `colmena apply --on '@<tag>'`
@@ -32,7 +32,9 @@ must be on PATH: `nix shell nixpkgs#just nixpkgs#nushell`.
   `mylib.relativeToRoot`) and `outputs/<system>/src/<name>.nix` (flake-output wiring). MicroVMs use
   `hosts/microvm-<name>/` + `outputs/<system>/src/microvm-<name>.nix`.
 - `nixos/base/` = shared modules; `nixos/server/server-{aarch64,riscv64}.nix` = per-arch base.
-- `lib/` = custom helpers (`nixosSystem`, `colmenaSystem`, `scanPaths`, `relativeToRoot`).
+- `lib/` re-exports nix-config's shared helpers (`nixosSystem`, `colmenaSystem`, `attrs`,
+  `scanPaths`) from the pinned `mynixcfg` input instead of copying them; only `relativeToRoot` is
+  local, because upstream roots it at the nix-config checkout while this repo needs its own root.
 - Kernel/firmware come from external flakes `nixos-rk3588` / `nixos-licheepi4a`; each host pins its
   own nixpkgs (`nixos-rk3588.inputs.nixpkgs`, or `nixpkgs-microvm` for VMs).
 
@@ -45,10 +47,11 @@ must be on PATH: `nix shell nixpkgs#just nixpkgs#nushell`.
 
 ## Gotchas
 
-- `myvars` (username, host IPs) comes from the `mynixcfg` input (an external `nix-config` checkout),
-  pinned to a fixed revision because its `vars/` API (`defaultGateway`, `sshAuthorizedKeys`, ...)
-  changed upstream; bump it only together with the names used here. Eval/build needs access to it.
-  The SBC-only secrets input was dropped together with the `microvm-suzi` dae router.
+- `myvars` (username, host IPs) and `mylib` come from the `mynixcfg` input (an external `nix-config`
+  checkout) pinned to a fixed revision, so `just up` cannot silently change their API. It tracks a
+  recent nix-config, which uses `proxyGateway` (not `defaultGateway`) and `mainSshAuthorizedKeys`
+  (not `sshAuthorizedKeys`); bump it only together with the names used here. Eval/build needs access
+  to it. The SBC-only secrets input was dropped together with the `microvm-suzi` dae router.
 - Use `just test` as the CI check. `nix flake check` (which also evaluates every
   `nixosConfigurations` toplevel) currently fails on the riscv64 hosts: `nixos-licheepi4a` only
   exposes `packages.x86_64-linux` (`pkgsKernelCross`/`pkgsKernelNative`), while

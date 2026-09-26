@@ -22,7 +22,9 @@ in
   # Set static IP address / gateway / DNS servers.
   networking = {
     inherit hostName;
-    inherit (myvars.networking) defaultGateway nameservers;
+    inherit (myvars.networking) nameservers;
+    # upstream renamed `defaultGateway` to `proxyGateway`; keep the NixOS option name
+    defaultGateway = myvars.networking.proxyGateway;
     inherit (myvars.networking.hostsInterface.${hostName}) interfaces;
 
     wireless = {

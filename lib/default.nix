@@ -1,23 +1,12 @@
-{ lib, ... }: {
-  colmenaSystem = import ./colmenaSystem.nix;
-  nixosSystem = import ./nixosSystem.nix;
-
-  attrs = import ./attrs.nix { inherit lib; };
-
-  # use path relative to the root of the project
+{ lib, mynixcfg, ... }:
+let
+  # Reuse nix-config's shared helpers instead of copying them into this repo.
+  # `scanPaths` is path-agnostic; `nixosSystem`/`colmenaSystem`/`attrs` are generic.
+  upstream = import "${mynixcfg}/lib" { inherit lib; };
+in
+upstream
+// {
+  # `relativeToRoot` is the one helper that is rooted at its own repo, so it must
+  # resolve to *this* repo rather than to nix-config's checkout.
   relativeToRoot = lib.path.append ../.;
-  scanPaths =
-    path:
-    builtins.map (f: (path + "/${f}")) (
-      builtins.attrNames (
-        lib.attrsets.filterAttrs (
-          path: _type:
-          (_type == "directory") # include directories
-          || (
-            (path != "default.nix") # ignore default.nix
-            && (lib.strings.hasSuffix ".nix" path) # include .nix files
-          )
-        ) (builtins.readDir path)
-      )
-    );
 }

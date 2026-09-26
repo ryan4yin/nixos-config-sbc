@@ -82,10 +82,10 @@
 
     ########################  My own repositories  #########################################
 
-    # This repo consumes `nix-config`'s `vars/`, so pin it to a revision whose vars API
-    # matches (e.g. `defaultGateway`, `sshAuthorizedKeys`). Tracking `main` breaks eval as
-    # soon as those names change (they were renamed upstream around 2025-05).
-    mynixcfg.url = "github:ryan4yin/nix-config/417d7ad2d78fd10799bafe687c0d4fe713c92fb5";
+    # This repo consumes nix-config's `vars/` and shared `lib/`. Pin it to a fixed
+    # revision so `just up` cannot silently change the vars API (e.g. `defaultGateway`
+    # -> `proxyGateway`, `sshAuthorizedKeys` -> `mainSshAuthorizedKeys`).
+    mynixcfg.url = "github:ryan4yin/nix-config/51e6a20617b027c4b10937a8e8ff4ad14084cf9b";
 
     # riscv64 SBCs
     nixos-licheepi4a.url = "github:ryan4yin/nixos-licheepi4a";

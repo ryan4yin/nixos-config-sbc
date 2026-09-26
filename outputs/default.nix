@@ -7,7 +7,7 @@
 }@inputs:
 let
   inherit (inputs.nixpkgs) lib;
-  mylib = import ../lib { inherit lib; };
+  mylib = import ../lib { inherit lib mynixcfg; };
   myvars = import "${mynixcfg}/vars" { inherit lib; };
 
   # Add my custom lib, vars, nixpkgs instance, and all the inputs to specialArgs,
