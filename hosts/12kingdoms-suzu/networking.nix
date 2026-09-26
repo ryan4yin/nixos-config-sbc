@@ -15,7 +15,7 @@ in {
   systemd.network.enable = true;
 
   # A bridge to link all VM's TAP interfaces into local network.
-  # https://github.com/astro/microvm.nix/blob/main/doc/src/simple-network.md
+  # https://github.com/microvm-nix/microvm.nix/blob/main/doc/src/simple-network.md
   systemd.network.networks."10-lan" = {
     # match on the main interface and all VM interfaces
     matchConfig.Name = [iface "vm-*"];

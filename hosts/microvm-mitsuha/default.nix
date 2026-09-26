@@ -50,7 +50,7 @@
         # and thus the VM can't run any command that modifies
         # the store. such as nix build, nix shell, etc...
         # if you want to run nix commands in the VM, see
-        # https://github.com/astro/microvm.nix/blob/main/doc/src/shares.md#writable-nixstore-overlay
+        # https://github.com/microvm-nix/microvm.nix/blob/main/doc/src/shares.md#writable-nixstore-overlay
         tag = "ro-store"; # Unique virtiofs daemon tag
         proto = "virtiofs"; # virtiofs is faster than 9p
         source = "/nix/store";

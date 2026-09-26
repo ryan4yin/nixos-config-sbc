@@ -10,10 +10,13 @@ nixpkgs can be pinned/bumped without breaking kernels/uboot.
 must be on PATH: `nix shell nixpkgs#just nixpkgs#nushell`.
 
 - `just test` - run eval tests (`nix eval .#evalTests`). This is the CI check. Run it after edits.
-- `nix fmt` - format `.nix` files with alejandra.
+- `nix fmt` - format `.nix` files with alejandra. NOTE: the flake only exposes
+  `formatter.aarch64-linux`/`formatter.riscv64-linux`, so on an x86_64 dev machine use
+  `nix shell nixpkgs#alejandra -c alejandra <files>` instead.
 - `nix develop` - dev shell; its shellHook installs pre-commit hooks (alejandra, typos --write,
   prettier --write).
-- `just col <tag>` / `just riscv|nozomi|yukina` - deploy via `colmena apply --on '@<tag>'`.
+- `just col <tag> [mode]` / `just riscv|nozomi|yukina` - deploy via `colmena apply --on '@<tag>'`
+  (`mode` defaults to `switch`; use `boot` for network-stack changes).
 - `just vm <hostname>` - build & install a microvm on `suzu`.
 - `just suzu-local [mode]` / `just rakushun-local [mode]` - `nixos-rebuild switch` locally
   (`mode=debug` adds nom/verbose).
@@ -43,9 +46,10 @@ must be on PATH: `nix shell nixpkgs#just nixpkgs#nushell`.
 
 ## Gotchas
 
-- `myvars` (username, host IPs) comes from the `mynixcfg` input; `mysecrets` is a **private** SSH
-  flake input (`git+ssh://git@github.com/ryan4yin/nix-secrets.git`). Eval/build needs access to
-  both.
+- `myvars` (username, host IPs) comes from the `mynixcfg` input (an external `nix-config` checkout),
+  pinned to a fixed revision because its `vars/` API (`defaultGateway`, `sshAuthorizedKeys`, ...)
+  changed upstream; bump it only together with the names used here. Eval/build needs access to it.
+  The SBC-only secrets input was dropped together with the `microvm-suzi` dae router.
 - Do **not** run `nix flake check` or eval `.#checks` - it stack-overflows (see CI comment). Use
   `just test`.
 - `evalTests` must equal `{}` (all true). Test dirs are

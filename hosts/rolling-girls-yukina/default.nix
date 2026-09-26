@@ -28,7 +28,7 @@ in {
       # https://wiki.archlinux.org/title/wpa_supplicant
       enable = true;
       # The path to the file containing the WPA passphrase.
-      # secrets are not supported well on riscv64, I nned to create this file manually.
+      # secrets are not supported well on riscv64, I need to create this file manually.
       # Format: "PSK_WEMEET_PRIVATE_WIFI=your_password"
       environmentFile = "/etc/wpa_supplicant.env";
       # The network definitions to automatically connect to when wpa_supplicant is running.

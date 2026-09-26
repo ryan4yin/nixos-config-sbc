@@ -6,17 +6,19 @@ See [./hosts](./hosts) for details of each host.
 
 ## Why a separate repository for SBCs?
 
-It is troublesome to update nixpkgs on aarch64/riscv64 SBCs, which can easily cause various problems
-such as kernel compilation failure and boot failure caused by uboot/edk2 incompatibility. So it
-feels like a good idea to create separate flakes for SBCs and have them updated separately.
+SBC support (kernel / uboot / edk2 firmware) comes from external flakes — `nixos-rk3588` for aarch64
+and `nixos-licheepi4a` for riscv64 — and each host takes its nixpkgs from those flakes. Keeping the
+SBC hosts in their own flake lets them track a different nixpkgs line than
+[nix-config](https://github.com/ryan4yin/nix-config) instead of coupling their slow,
+hardware-dependent updates to the main repo's fast-moving nixpkgs.
 
+> NOTE: all the SBC hosts in this repository are currently powered off / offline.
 
 ## Usage
 
 ```bash
 # deploy microvms
 just vm mitsuha
-just vm suzi
 
 # deploy microvms & its host machine
 just suzu-local # locally

@@ -22,7 +22,7 @@
   #     => { foo_x = "bar-a"; foo_y = "bar-b"; }
   inherit (lib.attrsets) mapAttrs';
 
-  # Merge a list of attribute sets into one. smilar to the operator `a // b`, but for a list of attribute sets.
+  # Merge a list of attribute sets into one. similar to the operator `a // b`, but for a list of attribute sets.
   # NOTE: the later attribute set overrides the former one!
   #
   #   mergeAttrsList

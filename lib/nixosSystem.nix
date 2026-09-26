@@ -10,15 +10,12 @@
   myvars,
   ...
 }: let
-  inherit (inputs) home-manager nixos-generators;
+  inherit (inputs) home-manager;
 in
   nixpkgs.lib.nixosSystem {
     inherit system specialArgs;
     modules =
       nixos-modules
-      ++ [
-        nixos-generators.nixosModules.all-formats
-      ]
       ++ (
         lib.optionals ((lib.lists.length home-modules) > 0)
         [
@@ -26,6 +23,7 @@ in
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
+            home-manager.backupFileExtension = "home-manager.backup";
 
             home-manager.extraSpecialArgs = specialArgs;
             home-manager.users."${myvars.username}".imports = home-modules;

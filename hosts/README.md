@@ -3,8 +3,7 @@
 1. `12kingdoms`:
    1. `suzu`: Orange Pi 5, RK3588s(4xA76 + 4xA55), GPU(4Cores, Mail-G610), NPU(6Tops@int8), 8G RAM +
       256G SSD.
-      - Network related services running via microvm.nix, such as router(transparent proxy - dae),
-        tailscale subrouter, etc.
+      - Network related services running via microvm.nix, such as a tailscale subrouter, etc.
    1. `rakushun`: Orange Pi 5 Plus, RK3588(4xA76 + 4xA55), GPU(4Cores, Mail-G610), NPU(6Tops@int8),
       16G RAM + 2T SSD.
       - Not used now.

@@ -8,7 +8,7 @@
 #
 #  Suzu - Orange Pi 5 Plus, RK3588 + 16GB RAM
 #
-#  https://github.com/astro/microvm.nix
+#  https://github.com/microvm-nix/microvm.nix
 #
 #############################################################
 let

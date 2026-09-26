@@ -16,7 +16,6 @@ LUKS encrypted SSD for NixOS, on Orange Pi 5.
 
 Micro VMs:
 
-1. suzi: dae router(transparent proxy, dhcp)
 1. mitsuha: tailscale gateway(sub router)
 
 Services:
