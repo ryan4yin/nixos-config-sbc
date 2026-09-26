@@ -10,7 +10,8 @@
 #############################################################
 let
   hostName = "yukina"; # Define your hostname.
-in {
+in
+{
   imports = [
     # import the licheepi4a module, which contains the configuration for bootloader/kernel/firmware
     (nixos-licheepi4a + "/modules/licheepi4a.nix")

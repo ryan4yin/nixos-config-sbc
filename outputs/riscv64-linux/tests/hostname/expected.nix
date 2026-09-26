@@ -1,8 +1,9 @@
 {
   lib,
   outputs,
-}: let
+}:
+let
   hostsNames = builtins.attrNames outputs.nixosConfigurations;
   expected = lib.genAttrs hostsNames (name: name);
 in
-  expected
+expected

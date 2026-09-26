@@ -6,7 +6,8 @@
   nixpkgs,
   lib,
   ...
-} @ args: {
+}@args:
+{
   nixpkgs.overlays = [
     nuenv.overlays.default
   ];
@@ -79,12 +80,15 @@
 
   nix.settings = {
     # enable flakes globally
-    experimental-features = ["nix-command" "flakes"];
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
 
     # given the users in this list the right to specify additional substituters via:
     #    1. `nixConfig.substituers` in `flake.nix`
     #    2. command line args `--options substituers http://xxx`
-    trusted-users = [myvars.username];
+    trusted-users = [ myvars.username ];
 
     # substituers that will be considered before the official ones(https://cache.nixos.org)
     substituters = [
@@ -116,7 +120,7 @@
   environment.etc."nix/inputs/nixpkgs".source = "${nixpkgs}";
   # make `nix repl '<nixpkgs>'` use the same nixpkgs as the one used by this flake.
   # discard all the default paths, and only use the one from this flake.
-  nix.nixPath = lib.mkForce ["/etc/nix/inputs"];
+  nix.nixPath = lib.mkForce [ "/etc/nix/inputs" ];
   # https://github.com/NixOS/nix/issues/9574
   nix.settings.nix-path = lib.mkForce "nixpkgs=/etc/nix/inputs/nixpkgs";
 }

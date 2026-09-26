@@ -35,6 +35,11 @@
     # Used as microvm's nixpkgs
     nixpkgs-microvm.url = "github:nixos/nixpkgs/nixos-unstable";
 
+    # Tooling-only nixpkgs. The RFC 166 `nixfmt` is not in the 24.11 line above
+    # (it only ships the classic nixfmt 0.5.0), so the formatter and dev shell
+    # pull `nixfmt` from here. Nothing from this input reaches the hosts.
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+
     # nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
     # home-manager, used for managing user configuration

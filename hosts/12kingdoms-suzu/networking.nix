@@ -1,10 +1,12 @@
-{myvars, ...}: let
+{ myvars, ... }:
+let
   hostName = "suzu";
   inherit (myvars.networking) mainGateway nameservers;
   inherit (myvars.networking.hostsAddr.${hostName}) iface ipv4;
 
   ipv4WithMask = "${ipv4}/24";
-in {
+in
+{
   boot.kernel.sysctl = {
     # forward network packets that are not destined for the interface on which they were received
     "net.ipv4.conf.all.forwarding" = true;
@@ -18,7 +20,10 @@ in {
   # https://github.com/microvm-nix/microvm.nix/blob/main/doc/src/simple-network.md
   systemd.network.networks."10-lan" = {
     # match on the main interface and all VM interfaces
-    matchConfig.Name = [iface "vm-*"];
+    matchConfig.Name = [
+      iface
+      "vm-*"
+    ];
     networkConfig = {
       Bridge = "br0";
     };
@@ -35,7 +40,7 @@ in {
   systemd.network.networks."10-lan-bridge" = {
     matchConfig.Name = "br0";
     networkConfig = {
-      Address = [ipv4WithMask];
+      Address = [ ipv4WithMask ];
       Gateway = mainGateway;
       DNS = nameservers;
       IPv6AcceptRA = true;

@@ -1,4 +1,4 @@
-{mylib, ...}: {
+{ mylib, ... }: {
   imports =
     (mylib.scanPaths ./.)
     ++ (map mylib.relativeToRoot [

@@ -2,7 +2,8 @@
   preservation,
   pkgs,
   ...
-}: {
+}:
+{
   imports = [
     preservation.nixosModules.default
   ];

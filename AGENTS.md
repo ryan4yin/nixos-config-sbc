@@ -10,8 +10,9 @@ nixpkgs can be pinned/bumped without breaking kernels/uboot.
 must be on PATH: `nix shell nixpkgs#just nixpkgs#nushell`.
 
 - `just test` - run eval tests (`nix eval .#evalTests`). This is the CI check. Run it after edits.
-- `nix fmt` - format `.nix` files with alejandra (`formatter` also exists for `x86_64-linux`).
-- `nix develop` - dev shell; its shellHook installs pre-commit hooks (alejandra, typos --write,
+- `just fmt` - format `.nix` files with nixfmt (RFC 166 style, width 100). `nix fmt` also works
+  (the `formatter` output exists for `x86_64-linux` too), but pass files explicitly.
+- `nix develop` - dev shell; its shellHook installs pre-commit hooks (nixfmt, typos --write,
   prettier --write).
 - `just col <tag> [mode]` / `just riscv|nozomi|yukina` - deploy via `colmena apply --on '@<tag>'`
   (`mode` defaults to `switch`; use `boot` for network-stack changes).
@@ -56,7 +57,7 @@ must be on PATH: `nix shell nixpkgs#just nixpkgs#nushell`.
   it only with hardware to verify the kernel choice (cross vs native).
 - `evalTests` must equal `{}` (all true). Test dirs are
   `outputs/<system>/tests/<name>/{expr.nix,expected.nix}`.
-- Formatters differ: alejandra for `.nix`, prettier (`.prettierrc.yaml`) for everything else, typos
-  (`.typos.toml`) for spelling. Pre-commit hooks auto-fix on commit.
+- Formatters differ: nixfmt (width 100) for `.nix`, prettier (`.prettierrc.yaml`) for everything
+  else, typos (`.typos.toml`) for spelling. Pre-commit hooks auto-fix on commit.
 - Keep this repo on its pinned nixpkgs line; bumping nixpkgs here can break SBC kernel/uboot —
   verify on hardware, not just eval.

@@ -2,9 +2,11 @@
   config,
   lib,
   ...
-}: let
+}:
+let
   cfg = config.modules.btrbk;
-in {
+in
+{
   # ==================================================================
   #
   # btrbk - scheduled LOCAL btrfs snapshots.
@@ -33,7 +35,9 @@ in {
   options.modules.btrbk = {
     # Enabled by default to keep the previous always-on behaviour for the
     # aarch64 servers that import this module.
-    enable = (lib.mkEnableOption "scheduled btrfs snapshots via btrbk") // {default = true;};
+    enable = (lib.mkEnableOption "scheduled btrfs snapshots via btrbk") // {
+      default = true;
+    };
 
     volume = lib.mkOption {
       type = lib.types.str;

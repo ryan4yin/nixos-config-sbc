@@ -92,7 +92,8 @@ shell:
 [group('nix')]
 fmt:
   # format the nix files in this repo
-  nix fmt .
+  # (use external find so symlinked dirs like the `result` build output are not followed)
+  ^find . -name '*.nix' -not -path './.git/*' | lines | each { |it| nixfmt $it | ignore }
 
 # Show all the auto gc roots in the nix store
 [group('nix')]

@@ -1626,6 +1626,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-unstable_3": {
+      "locked": {
+        "lastModified": 1790323409,
+        "narHash": "sha256-VVTPf+Hyd5ebpjBMHmrLMSBIeW6ls48Bqtosj7CNKLA=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "e94cb152ed51bd6e24eb4a41f1460252beb52cd2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs_10": {
       "locked": {
         "lastModified": 1691280485,
@@ -2144,6 +2160,7 @@
         "nixos-rk3588": "nixos-rk3588",
         "nixpkgs": "nixpkgs_12",
         "nixpkgs-microvm": "nixpkgs-microvm",
+        "nixpkgs-unstable": "nixpkgs-unstable_3",
         "nuenv": "nuenv_2",
         "pre-commit-hooks": "pre-commit-hooks_5",
         "preservation": "preservation"

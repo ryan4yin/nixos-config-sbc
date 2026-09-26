@@ -2,21 +2,22 @@
   myvars,
   config,
   ...
-}: {
+}:
+{
   # Don't allow mutation of users outside the config.
   users.mutableUsers = false;
 
   users.groups = {
-    "${myvars.username}" = {};
-    docker = {};
-    wireshark = {};
+    "${myvars.username}" = { };
+    docker = { };
+    wireshark = { };
     # for android platform tools's udev rules
-    adbusers = {};
-    dialout = {};
+    adbusers = { };
+    dialout = { };
     # for openocd (embedded system development)
-    plugdev = {};
+    plugdev = { };
     # misc
-    uinput = {};
+    uinput = { };
   };
 
   users.users."${myvars.username}" = {
