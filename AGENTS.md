@@ -10,9 +10,7 @@ nixpkgs can be pinned/bumped without breaking kernels/uboot.
 must be on PATH: `nix shell nixpkgs#just nixpkgs#nushell`.
 
 - `just test` - run eval tests (`nix eval .#evalTests`). This is the CI check. Run it after edits.
-- `nix fmt` - format `.nix` files with alejandra. NOTE: the flake only exposes
-  `formatter.aarch64-linux`/`formatter.riscv64-linux`, so on an x86_64 dev machine use
-  `nix shell nixpkgs#alejandra -c alejandra <files>` instead.
+- `nix fmt` - format `.nix` files with alejandra (`formatter` also exists for `x86_64-linux`).
 - `nix develop` - dev shell; its shellHook installs pre-commit hooks (alejandra, typos --write,
   prettier --write).
 - `just col <tag> [mode]` / `just riscv|nozomi|yukina` - deploy via `colmena apply --on '@<tag>'`

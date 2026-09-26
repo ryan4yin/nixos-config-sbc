@@ -92,7 +92,7 @@ shell:
 [group('nix')]
 fmt:
   # format the nix files in this repo
-  nix fmt
+  nix fmt .
 
 # Show all the auto gc roots in the nix store
 [group('nix')]

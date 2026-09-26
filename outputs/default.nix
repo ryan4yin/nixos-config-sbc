@@ -34,6 +34,12 @@
 
   # Helper function to generate a set of attributes for each system
   forAllSystems = func: (nixpkgs.lib.genAttrs allSystemNames func);
+
+  # Systems that only need the checks / dev-shell / formatter outputs and have
+  # no nixosConfiguration of their own (e.g. the x86_64 dev machine and CI
+  # runners). Without this, `nix develop` / `nix fmt` fail on x86_64.
+  devSystemNames = allSystemNames ++ ["x86_64-linux"];
+  forAllDevSystems = func: (nixpkgs.lib.genAttrs devSystemNames func);
 in {
   # Add attribute sets into outputs, for debugging
   debugAttrs = {inherit nixosSystems darwinSystems allSystems allSystemNames;};
@@ -75,14 +81,15 @@ in {
   # Eval Tests for all NixOS & darwin systems.
   evalTests = lib.lists.all (it: it.evalTests == {}) allSystemValues;
 
-  checks = forAllSystems (
+  checks = forAllDevSystems (
     system: let
       pkgs = nixpkgs.legacyPackages.${system};
     in {
       # eval-tests per system. `nix flake check` requires every check to be a
       # derivation, so wrap the boolean result in one instead of returning a bool.
       eval-tests = let
-        results = allSystems.${system}.evalTests;
+        # x86_64-linux has no nixosConfigurations, so its eval tests are vacuously empty.
+        results = allSystems.${system}.evalTests or {};
       in
         pkgs.runCommand "eval-tests" {} (
           if results == {}
@@ -117,7 +124,7 @@ in {
   );
 
   # Development Shells
-  devShells = forAllSystems (
+  devShells = forAllDevSystems (
     system: let
       pkgs = nixpkgs.legacyPackages.${system};
     in {
@@ -145,7 +152,7 @@ in {
   );
 
   # Format the nix code in this flake
-  formatter = forAllSystems (
+  formatter = forAllDevSystems (
     # alejandra is a nix formatter with a beautiful output
     system: nixpkgs.legacyPackages.${system}.alejandra
   );
