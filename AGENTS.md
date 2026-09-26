@@ -48,8 +48,12 @@ must be on PATH: `nix shell nixpkgs#just nixpkgs#nushell`.
   pinned to a fixed revision because its `vars/` API (`defaultGateway`, `sshAuthorizedKeys`, ...)
   changed upstream; bump it only together with the names used here. Eval/build needs access to it.
   The SBC-only secrets input was dropped together with the `microvm-suzi` dae router.
-- Do **not** run `nix flake check` or eval `.#checks` - it stack-overflows (see CI comment). Use
-  `just test`.
+- Use `just test` as the CI check. `nix flake check` (which also evaluates every
+  `nixosConfigurations` toplevel) currently fails on the riscv64 hosts: `nixos-licheepi4a` only
+  exposes `packages.x86_64-linux` (`pkgsKernelCross`/`pkgsKernelNative`), while
+  `outputs/riscv64-linux/src/*.nix` reads `packages.${system}` with `system = "riscv64-linux"`. This
+  is pre-existing and latent (the reference is only forced when building, not by `just test`); fix
+  it only with hardware to verify the kernel choice (cross vs native).
 - `evalTests` must equal `{}` (all true). Test dirs are
   `outputs/<system>/tests/<name>/{expr.nix,expected.nix}`.
 - Formatters differ: alejandra for `.nix`, prettier (`.prettierrc.yaml`) for everything else, typos
