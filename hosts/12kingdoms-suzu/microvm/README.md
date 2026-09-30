@@ -2,7 +2,7 @@
 
 ## Commands
 
-> https://github.com/astro/microvm.nix/blob/main/doc/src/microvm-command.md
+> https://github.com/microvm-nix/microvm.nix/blob/main/doc/src/microvm-command.md
 
 ```bash
 # list vm
@@ -37,10 +37,10 @@ microvm -r my-microvm
    configuration, without affecting the host.
 1. VM use a fullfeatured init system, so it can run services like a real machine.
 1. VM can use a fullfeatured network stack, so it can run network services like a real machine. it's
-   very useful for hosting some network services(such as tailscale, dae, etc).
+   very useful for hosting some network services(such as tailscale, etc).
 
 ## FAQ
 
 ### 1. enter the vm without ssh
 
-[Enter running machine as systemd service](https://github.com/astro/microvm.nix/issues/123)
+[Enter running machine as systemd service](https://github.com/microvm-nix/microvm.nix/issues/123)

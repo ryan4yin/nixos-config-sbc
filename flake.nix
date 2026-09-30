@@ -31,13 +31,14 @@
 
     # Used only as colmena's default nixpkgs, will be overwritten in each host by colmenaMeta.nodeNixpkgs
     nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
-    # used only by `pkgs-unstable`, for some packages.
-    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
-    # unsed only by `pkgs-stable`, for some packages.
-    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.11";
 
     # Used as microvm's nixpkgs
     nixpkgs-microvm.url = "github:nixos/nixpkgs/nixos-unstable";
+
+    # Tooling-only nixpkgs. The RFC 166 `nixfmt` is not in the 24.11 line above
+    # (it only ships the classic nixfmt 0.5.0), so the formatter and dev shell
+    # pull `nixfmt` from here. Nothing from this input reaches the hosts.
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
 
     # nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
@@ -52,30 +53,18 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    impermanence.url = "github:nix-community/impermanence";
-
-    # generate iso/qcow2/docker/... image from nixos configuration
-    nixos-generators = {
-      url = "github:nix-community/nixos-generators";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    # secrets management
-    agenix = {
-      # lock with git commit at 0.15.0
-      url = "github:ryantm/agenix/564595d0ad4be7277e07fa63b5a991b3c645655d";
-      # replaced with a type-safe reimplementation to get a better error message and less bugs.
-      # url = "github:ryan4yin/ragenix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    preservation.url = "github:nix-community/preservation";
 
     disko = {
-      url = "github:nix-community/disko/v1.11.0";
+      url = "github:nix-community/disko/v1.13.0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # add git hooks to format nix code before commit
+    # NOTE: keep this pinned to a revision compatible with the nixpkgs line above;
+    # newer git-hooks.nix expects packages (e.g. `air-formatter`) absent from 24.11.
     pre-commit-hooks = {
-      url = "github:cachix/pre-commit-hooks.nix";
+      url = "github:cachix/git-hooks.nix/9364dc02281ce2d37a1f55b6e51f7c0f65a75f17";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -86,26 +75,17 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    daeuniverse.url = "github:daeuniverse/flake.nix";
-    # daeuniverse.url = "github:daeuniverse/flake.nix/exp";
-
     microvm = {
-      url = "github:astro/microvm.nix";
+      url = "github:microvm-nix/microvm.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     ########################  My own repositories  #########################################
 
-    # refer vars from the main branch
-    mynixcfg.url = "github:ryan4yin/nix-config/main";
-    mynixcfg-v055.url = "github:ryan4yin/nix-config/v0.5.5";
-
-    # my private secrets, it's a private repository, you need to replace it with your own.
-    # use ssh protocol to authenticate via ssh-agent/ssh-key, and shallow clone to save time
-    mysecrets = {
-      url = "git+ssh://git@github.com/ryan4yin/nix-secrets.git?shallow=1";
-      flake = false;
-    };
+    # This repo consumes nix-config's `vars/` and shared `lib/`. Pin it to a fixed
+    # revision so `just up` cannot silently change the vars API (e.g. `defaultGateway`
+    # -> `proxyGateway`, `sshAuthorizedKeys` -> `mainSshAuthorizedKeys`).
+    mynixcfg.url = "github:ryan4yin/nix-config/51e6a20617b027c4b10937a8e8ff4ad14084cf9b";
 
     # riscv64 SBCs
     nixos-licheepi4a.url = "github:ryan4yin/nixos-licheepi4a";

@@ -23,16 +23,34 @@ default:
 test:
   nix eval .#evalTests --show-trace --print-build-logs --verbose
 
+# Evaluate a NixOS host configuration without building it.
+[linux]
+[group('nix')]
+eval-host host:
+  nix eval .#nixosConfigurations.{{host}}.config.system.build.toplevel.drvPath --raw --show-trace
+
+# Build a NixOS host system closure without changing the current system.
+[linux]
+[group('nix')]
+build-host host:
+  nix build .#nixosConfigurations.{{host}}.config.system.build.toplevel --no-link --print-build-logs
+
+# Build a MicroVM runner locally. Deploy it with `just vm` so the closure is copied remotely.
+[linux]
+[group('nix')]
+build-microvm guest:
+  nix build .#nixosConfigurations.{{guest}}.config.microvm.declaredRunner --no-link --print-build-logs
+
 # Update all the flake inputs
 [group('nix')]
 up:
-  nix flake update
+  nix flake update --commit-lock-file
 
 # Update specific input
 # Usage: just upp nixpkgs
 [group('nix')]
 upp input:
-  nix flake update {{input}}
+  nix flake update {{input}} --commit-lock-file
 
 # List all generations of the system profile
 [group('nix')]
@@ -74,7 +92,8 @@ shell:
 [group('nix')]
 fmt:
   # format the nix files in this repo
-  nix fmt
+  # (use external find so symlinked dirs like the `result` build output are not followed)
+  ^find . -name '*.nix' -not -path './.git/*' | lines | each { |it| nixfmt $it | ignore }
 
 # Show all the auto gc roots in the nix store
 [group('nix')]
@@ -84,8 +103,8 @@ gcroot:
 # Remote deployment via colmena
 [linux]
 [group('homelab')]
-col tag:
-  colmena apply --on '@{{tag}}' --verbose --show-trace
+col tag mode="switch":
+  colmena apply {{mode}} --on '@{{tag}}' --verbose --show-trace
 
 [linux]
 [group('homelab')]

@@ -8,21 +8,20 @@
 #
 #  Suzu - Orange Pi 5 Plus, RK3588 + 16GB RAM
 #
-#  https://github.com/astro/microvm.nix
+#  https://github.com/microvm-nix/microvm.nix
 #
 #############################################################
 let
   hostName = "suzu"; # Define your hostname.
-in {
-  imports =
-    (mylib.scanPaths ./.)
-    ++ [
-      # import the rk3588 module, which contains the configuration for bootloader/kernel/firmware
-      nixos-rk3588.nixosModules.boards.orangepi5plus.core
-      disko.nixosModules.default
-    ];
+in
+{
+  imports = (mylib.scanPaths ./.) ++ [
+    # import the rk3588 module, which contains the configuration for bootloader/kernel/firmware
+    nixos-rk3588.nixosModules.boards.orangepi5plus.core
+    disko.nixosModules.default
+  ];
 
-  networking = {inherit hostName;};
+  networking = { inherit hostName; };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

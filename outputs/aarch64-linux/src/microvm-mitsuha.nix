@@ -9,9 +9,13 @@
   system,
   genSpecialArgs,
   ...
-} @ args: let
+}@args:
+let
   name = "mitsuha";
-  tags = [name "aarch"];
+  tags = [
+    name
+    "aarch"
+  ];
   ssh-user = "root";
 
   modules = {
@@ -31,11 +35,9 @@
 
   nixpkgs = inputs.nixpkgs-microvm;
   baseSpecialArgs = genSpecialArgs system;
-  specialArgs =
-    baseSpecialArgs
-    // {
-      inherit nixpkgs;
-    };
+  specialArgs = baseSpecialArgs // {
+    inherit nixpkgs;
+  };
   systemArgs =
     modules
     // args
@@ -43,6 +45,7 @@
       inherit nixpkgs;
       specialArgs = specialArgs;
     };
-in {
+in
+{
   nixosConfigurations.${name} = mylib.nixosSystem systemArgs;
 }

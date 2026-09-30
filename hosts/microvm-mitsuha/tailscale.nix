@@ -1,4 +1,4 @@
-{pkgs, ...}:
+{ pkgs, ... }:
 # =============================================================
 #
 # Tailscale - your own private network(VPN) that uses WireGuard
@@ -18,7 +18,7 @@
 # Status Data:
 #   `journalctl -u tailscaled` shows tailscaled's logs
 #   logs indicate that tailscale store its data in /var/lib/tailscale
-#   which is already persistent across reboots(via impermanence.nix)
+#   which is already persistent across reboots(via the microvm's /var volume)
 #
 # References:
 # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/services/networking/tailscale.nix
@@ -26,7 +26,7 @@
 # =============================================================
 {
   # make the tailscale command usable to users
-  environment.systemPackages = [pkgs.tailscale];
+  environment.systemPackages = [ pkgs.tailscale ];
 
   # enable the tailscale service
   services.tailscale = {

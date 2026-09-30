@@ -10,7 +10,8 @@
 #############################################################
 let
   hostName = "yukina"; # Define your hostname.
-in {
+in
+{
   imports = [
     # import the licheepi4a module, which contains the configuration for bootloader/kernel/firmware
     (nixos-licheepi4a + "/modules/licheepi4a.nix")
@@ -21,14 +22,16 @@ in {
   # Set static IP address / gateway / DNS servers.
   networking = {
     inherit hostName;
-    inherit (myvars.networking) defaultGateway nameservers;
+    inherit (myvars.networking) nameservers;
+    # upstream renamed `defaultGateway` to `proxyGateway`; keep the NixOS option name
+    defaultGateway = myvars.networking.proxyGateway;
     inherit (myvars.networking.hostsInterface.${hostName}) interfaces;
 
     wireless = {
       # https://wiki.archlinux.org/title/wpa_supplicant
       enable = true;
       # The path to the file containing the WPA passphrase.
-      # secrets are not supported well on riscv64, I nned to create this file manually.
+      # secrets are not supported well on riscv64, I need to create this file manually.
       # Format: "PSK_WEMEET_PRIVATE_WIFI=your_password"
       environmentFile = "/etc/wpa_supplicant.env";
       # The network definitions to automatically connect to when wpa_supplicant is running.

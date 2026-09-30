@@ -9,10 +9,14 @@
   system,
   genSpecialArgs,
   ...
-} @ args: let
+}@args:
+let
   # 大木 鈴, Ōki Suzu
   name = "suzu";
-  tags = [name "aarch"];
+  tags = [
+    name
+    "aarch"
+  ];
   ssh-user = "root";
 
   modules = {
@@ -29,18 +33,19 @@
   inherit (inputs) nixos-rk3588;
   baseSpecialArgs = genSpecialArgs system;
 
-  rk3588Pkgs = import nixos-rk3588.inputs.nixpkgs {inherit system;};
-  rk3588SpecialArgs = let
-    # using the same nixpkgs as nixos-rk3588
-    inherit (nixos-rk3588.inputs) nixpkgs;
-    # use aarch64-linux's native toolchain
-    pkgsKernel = import nixpkgs {inherit system;};
-  in
+  rk3588Pkgs = import nixos-rk3588.inputs.nixpkgs { inherit system; };
+  rk3588SpecialArgs =
+    let
+      # using the same nixpkgs as nixos-rk3588
+      inherit (nixos-rk3588.inputs) nixpkgs;
+      # use aarch64-linux's native toolchain
+      pkgsKernel = import nixpkgs { inherit system; };
+    in
     baseSpecialArgs
     // {
       inherit nixpkgs;
       # Provide rk3588 inputs as special argument
-      rk3588 = {inherit nixpkgs pkgsKernel;};
+      rk3588 = { inherit nixpkgs pkgsKernel; };
     };
 
   rk3588SystemArgs =
@@ -50,14 +55,13 @@
       inherit (nixos-rk3588.inputs) nixpkgs; # or nixpkgs-unstable
       specialArgs = rk3588SpecialArgs;
     };
-in {
+in
+{
   nixosConfigurations.${name} = mylib.nixosSystem rk3588SystemArgs;
 
   colmenaMeta = {
     nodeSpecialArgs.${name} = rk3588SpecialArgs;
     nodeNixpkgs.${name} = rk3588Pkgs;
   };
-  colmena.${name} =
-    mylib.colmenaSystem
-    (rk3588SystemArgs // {inherit tags ssh-user;});
+  colmena.${name} = mylib.colmenaSystem (rk3588SystemArgs // { inherit tags ssh-user; });
 }

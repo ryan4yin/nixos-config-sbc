@@ -9,10 +9,14 @@
   system,
   genSpecialArgs,
   ...
-} @ args: let
+}@args:
+let
   # 森友 望未, Moritomo Nozomi
   name = "nozomi";
-  tags = [name "riscv"];
+  tags = [
+    name
+    "riscv"
+  ];
   ssh-user = "root";
 
   modules = {
@@ -24,7 +28,7 @@
       ])
       ++ [
         # cross-compilation this flake.
-        {nixpkgs.crossSystem.system = "riscv64-linux";}
+        { nixpkgs.crossSystem.system = "riscv64-linux"; }
       ];
   };
 
@@ -32,7 +36,7 @@
   baseSpecialArgs = genSpecialArgs system;
 
   # using the same nixpkgs as nixos-licheepi4a to utilize the cross-compilation cache.
-  lpi4aPkgs = import nixos-licheepi4a.inputs.nixpkgs {inherit system;};
+  lpi4aPkgs = import nixos-licheepi4a.inputs.nixpkgs { inherit system; };
   lpi4aSpecialArgs =
     baseSpecialArgs
     // {
@@ -47,14 +51,13 @@
       inherit (nixos-licheepi4a.inputs) nixpkgs;
       specialArgs = lpi4aSpecialArgs;
     };
-in {
+in
+{
   nixosConfigurations.${name} = mylib.nixosSystem lpi4aSystemArgs;
 
   colmenaMeta = {
     nodeSpecialArgs.${name} = lpi4aSpecialArgs;
     nodeNixpkgs.${name} = lpi4aPkgs;
   };
-  colmena.${name} =
-    mylib.colmenaSystem
-    (lpi4aSystemArgs // {inherit tags ssh-user;});
+  colmena.${name} = mylib.colmenaSystem (lpi4aSystemArgs // { inherit tags ssh-user; });
 }

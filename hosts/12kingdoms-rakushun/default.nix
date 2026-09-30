@@ -12,18 +12,19 @@
 #############################################################
 let
   hostName = "rakushun"; # Define your hostname.
-in {
-  imports =
-    (mylib.scanPaths ./.)
-    ++ [
-      # import the rk3588 module, which contains the configuration for bootloader/kernel/firmware
-      nixos-rk3588.nixosModules.boards.orangepi5plus.core
-      disko.nixosModules.default
-    ];
+in
+{
+  imports = (mylib.scanPaths ./.) ++ [
+    # import the rk3588 module, which contains the configuration for bootloader/kernel/firmware
+    nixos-rk3588.nixosModules.boards.orangepi5plus.core
+    disko.nixosModules.default
+  ];
 
   networking = {
     inherit hostName;
-    inherit (myvars.networking) defaultGateway nameservers;
+    inherit (myvars.networking) nameservers;
+    # upstream renamed `defaultGateway` to `proxyGateway`; keep the NixOS option name
+    defaultGateway = myvars.networking.proxyGateway;
     inherit (myvars.networking.hostsInterface.${hostName}) interfaces;
     networkmanager.enable = false;
   };
