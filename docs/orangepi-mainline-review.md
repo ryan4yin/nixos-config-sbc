@@ -234,6 +234,34 @@ Open [PR #17](https://github.com/gnull/nixos-rk3588/pull/17) proposes dropping
 nixos-generators/specialArgs and exporting internal packages. It is unmerged housekeeping for that
 flake, not a missing feature in this repository after removing the dependency.
 
+## 6. Reduce the terminal-database build surface after identifying SSH clients
+
+The shared [SSH module](../nixos/base/ssh.nix#L26) enables `environment.enableAllTerminfo`. At this
+nixpkgs revision, that option installs terminfo outputs from 13 terminal packages, including
+Contour. Contour's `terminfo` is an output of its full Qt/C++ derivation rather than a separate
+lightweight build. During the migration, its recorded compilation took 11 minutes 25 seconds and
+exposed the GCC 16 SIMD regression now handled by the version-scoped
+[guest compatibility module](../hosts/microvm-mitsuha/contour-compat.nix).
+[Terminfo module](https://github.com/NixOS/nixpkgs/blob/6510408d147d8c5e6d76043e899e9251756f6a75/nixos/modules/config/terminfo.nix#L39),
+[Contour recipe](https://github.com/NixOS/nixpkgs/blob/6510408d147d8c5e6d76043e899e9251756f6a75/pkgs/by-name/co/contour/package.nix).
+
+For a small headless VM, identify the actual SSH clients' TERM names before replacing the
+all-terminal option with the required databases. This can remove unrelated terminal build failures
+and may make the Contour workaround unnecessary. Installing a selected terminal's terminfo output
+can still require its full package build; prefer an existing lightweight database where it contains
+the needed entry. Do not remove terminal support without checking interactive SSH and sudo behavior.
+This is a proposed optimization, not a configuration change made by the review.
+
+## 7. Make the host/guest nixpkgs update boundary deliberate
+
+The root and `nixpkgs-microvm` inputs currently use the same channel and revision, but remain
+separate update controls. A targeted update of only one input can therefore diverge them. If
+separate guest validation is not a deliberate policy, making `nixpkgs-microvm` follow `nixpkgs`
+removes one version choice while retaining separate package imports and guest/host kernel-family
+choices. If independent upgrade staging is useful, keep both and document that policy instead. This
+is not a present build bug and no input was changed for this suggestion.
+[Input declarations](../flake.nix#L32).
+
 ## Discussion coverage and limits
 
 All issue/PR metadata returned by the two repositories' `state=all, per_page=100` lists was
