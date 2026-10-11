@@ -1,5 +1,6 @@
 {
   lib,
+  pkgs,
   myvars,
   ...
 }:
@@ -23,7 +24,9 @@
     openFirewall = true;
   };
 
-  # Add terminfo database of all known terminals to the system profile.
-  # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/config/terminfo.nix
-  environment.enableAllTerminfo = true;
+  # Match nix-config's terminfo set for the terminals used to SSH into these hosts.
+  environment.systemPackages = [
+    pkgs.ghostty.terminfo
+    pkgs.kitty.terminfo
+  ];
 }

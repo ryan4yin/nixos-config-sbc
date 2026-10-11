@@ -21,7 +21,12 @@ default:
 # Run eval tests
 [group('nix')]
 test:
-  nix eval .#evalTests --show-trace --print-build-logs --verbose
+  nix eval .#evalTests --apply 'passed: assert passed; passed' --show-trace --print-build-logs --verbose
+
+# RISC-V hosts remain unverified; this is the supported architecture gate.
+[group('nix')]
+test-aarch64:
+  nix eval .#debugAttrs.nixosSystems.aarch64-linux.evalTests --apply 'failures: assert failures == {}; failures' --show-trace
 
 # Evaluate a NixOS host configuration without building it.
 [linux]

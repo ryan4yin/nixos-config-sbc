@@ -1,6 +1,5 @@
 {
   disko,
-  nixos-rk3588,
   mylib,
   ...
 }:
@@ -16,8 +15,7 @@ let
 in
 {
   imports = (mylib.scanPaths ./.) ++ [
-    # import the rk3588 module, which contains the configuration for bootloader/kernel/firmware
-    nixos-rk3588.nixosModules.boards.orangepi5plus.core
+    (mylib.relativeToRoot "nixos/boards/orangepi5plus.nix")
     disko.nixosModules.default
   ];
 

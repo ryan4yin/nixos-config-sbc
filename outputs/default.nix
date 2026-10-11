@@ -67,6 +67,9 @@ in
     map (it: it.nixosConfigurations or { }) nixosSystemValues
   );
 
+  # Direct flake evaluation required by current Colmena.
+  colmenaHive = mynixcfg.inputs.colmena.lib.makeHive self.outputs.colmena;
+
   # Colmena - remote deployment via SSH
   colmena = {
     meta =
@@ -100,14 +103,16 @@ in
   # Packages
   packages = forAllSystems (system: allSystems.${system}.packages or { });
 
-  # Eval Tests for all NixOS & darwin systems.
-  evalTests = lib.lists.all (it: it.evalTests == { }) allSystemValues;
+  # Force OPi deployment derivations before aggregating architecture expression tests.
+  evalTests = builtins.deepSeq (self.colmenaHive.evalSelectedDrvPaths [
+    "suzu"
+    "rakushun"
+  ]) (lib.lists.all (it: it.evalTests == { }) allSystemValues);
 
   checks = forAllDevSystems (
     system:
     let
       pkgs = nixpkgs.legacyPackages.${system};
-      # RFC 166 nixfmt, not available in the pinned 24.11 nixpkgs.
       nixfmt = (import inputs.nixpkgs-unstable { inherit system; }).nixfmt;
     in
     {
@@ -128,8 +133,7 @@ in
       pre-commit-check = pre-commit-hooks.lib.${system}.run {
         src = mylib.relativeToRoot ".";
         hooks = {
-          # `hooks.nixfmt` resolves to the classic formatter on the pinned 24.11
-          # nixpkgs, so use the explicit RFC-style hook with the unstable package.
+          # Keep the shared RFC 166 formatter and width explicit.
           nixfmt-rfc-style = {
             enable = true; # formatter (RFC 166 style)
             package = nixfmt;
@@ -162,7 +166,6 @@ in
     system:
     let
       pkgs = nixpkgs.legacyPackages.${system};
-      # RFC 166 nixfmt, not available in the pinned 24.11 nixpkgs.
       nixfmt = (import inputs.nixpkgs-unstable { inherit system; }).nixfmt;
     in
     {
