@@ -69,3 +69,15 @@ must be on PATH: `nix shell nixpkgs#just nixpkgs#nushell`.
   else, typos (`.typos.toml`) for spelling. Pre-commit hooks auto-fix on commit.
 - Successful eval/build does not establish a hardware boot. Validate encrypted-root unlock, firmware
   DT mode, storage/network and recovery on an OPi before activating an upgrade.
+
+## Agent skills
+
+### Issue tracker
+
+Issues and specs live in GitHub Issues for `ryan4yin/nixos-config-sbc`. See
+`docs/agents/issue-tracker.md`.
+
+### Domain docs
+
+Single-context: root `GLOSSARY.md` and `docs/adr/`. Before exploring terminology or architectural
+decisions, read `docs/agents/domain.md`.

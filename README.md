@@ -87,5 +87,4 @@ just col xxx
 ## References
 
 - [ryan4yin/nix-config](https://github.com/ryan4yin/nix-config/)
-- [NixOS/nixpkgs](https://github.com/NixOS/nixpkgs/)
 - [ryan4yin/nixos-licheepi4a](https://github.com/ryan4yin/nixos-licheepi4a/)
