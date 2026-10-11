@@ -2,10 +2,10 @@
 
 ## Scope and decision
 
-Keep the stock nixpkgs kernel and the existing EDK2 -> EFI GRUB boot path. The useful lessons from
-the old port are its explicit boot dependencies, serial diagnostics, and attention to the device
-tree actually handed to Linux. Its vendor kernel configuration, forced initrd restrictions, and
-board-specific workaround proposals should not be copied wholesale.
+Use the stock nixpkgs kernel and EDK2 -> systemd-boot for the fresh installation. The useful lessons
+from the old port are its explicit boot dependencies, serial diagnostics, and attention to the
+device tree actually handed to Linux. Its vendor kernel configuration, forced initrd restrictions,
+and board-specific workaround proposals should not be copied wholesale.
 
 This review compares the old input locked in the repository before migration,
 `ryan4yin/nixos-rk3588@fc13924f014d9d7961d1865ecaf388ba25d37f14`, with the migrated
@@ -16,15 +16,14 @@ fork. The fork is 15 commits ahead of the old input on its own history.
 [Original latest commit](https://github.com/ryan4yin/nixos-rk3588/commit/37ca2142a3c6e99e3a4145d235e1e80928c9195a),
 [fork comparison](https://github.com/ryan4yin/nixos-rk3588/compare/fc13924f014d9d7961d1865ecaf388ba25d37f14...gnull:main).
 
-The initial source-audit baseline was nixpkgs `6510408d147d8c5e6d76043e899e9251756f6a75`, selecting
-Linux **7.2.9**. The implemented release input is now `nixos-26.05` at
-`7c8764b7c7b09b34f632464276218ef9090eaa11`; evaluation confirms its `linuxPackages_latest` is also
-**7.2.9**, while the default family is **6.18.55**. The initial audit confirmed no explicit host
-governor override and `hardware.ksm.enable = true` on `suzu`. Its standard kernel configuration
-requests `CPU_FREQ_DEFAULT_GOV_SCHEDUTIL=y`, `KSM=y`, `CGROUPS=y`, `MEMCG=y`, and
-`CMA_SIZE_MBYTES=32`. These are builder configuration requests, not measurements of a running board.
-The source comparison also uses upstream v7.2 DT files and the exact v7.2.9 arm64 defconfig. A
-generated final `.config` and real firmware handoff were not read in this review.
+The source-audit baseline and implemented unstable input are nixpkgs
+`6510408d147d8c5e6d76043e899e9251756f6a75`. Its `linuxPackages_latest` selects Linux **7.2.9**,
+while the default family is **6.18.55**. The initial audit confirmed no explicit host governor
+override and `hardware.ksm.enable = true` on `suzu`. Its standard kernel configuration requests
+`CPU_FREQ_DEFAULT_GOV_SCHEDUTIL=y`, `KSM=y`, `CGROUPS=y`, `MEMCG=y`, and `CMA_SIZE_MBYTES=32`. These
+are builder configuration requests, not measurements of a running board. The source comparison also
+uses upstream v7.2 DT files and the exact v7.2.9 arm64 defconfig. A generated final `.config` and
+real firmware handoff were not read in this review.
 [Kernel selection](https://github.com/NixOS/nixpkgs/blob/6510408d147d8c5e6d76043e899e9251756f6a75/pkgs/top-level/linux-kernels.nix),
 [common configuration](https://github.com/NixOS/nixpkgs/blob/6510408d147d8c5e6d76043e899e9251756f6a75/pkgs/os-specific/linux/kernel/common-config.nix),
 [7.2.9 arm64 defconfig](https://github.com/gregkh/linux/blob/v7.2.9/arch/arm64/configs/defconfig).
@@ -56,8 +55,8 @@ automated file removal or firmware change is warranted by this source review.
 [EDK2 configuration](https://github.com/edk2-porting/edk2-rk3588#device-tree-configuration).
 
 Both host installation guides now point to the
-[current repository boot requirements](../README.md#orange-pi-boot-requirements) and canonical EDK2
-instructions, including the historical override check.
+[current repository boot requirements](../README.md#orange-pi-boot-and-fresh-installation) and
+canonical EDK2 instructions, including the historical override check.
 
 ### What the maintained fork fixed, and why it is not a drop-in improvement here
 
@@ -78,12 +77,12 @@ historical override files untouched and keeps the shared-copy hook for GRUB conf
 [Proposed files](https://github.com/gnull/nixos-rk3588/pull/20/files).
 
 The lesson worth borrowing is to make the active DT contract explicit and preserve rollback
-information. The current migration retains stock GRUB and requires a compatible upstream-derived
-firmware DT, whose actual handoff still needs hardware validation. EDK2 applies PCIe/SATA/USB
-runtime fixups to that DT; a loader-supplied DT may bypass firmware processing. The upstream DT ABI
-permits compatible older DTs with newer kernels, so matching every DTB to every kernel generation is
-not by itself a reason to change loaders. A loader change would require its own fixup and rollback
-validation.
+information. The fresh-install design uses systemd-boot with `installDeviceTree = false` and
+requires a compatible upstream-derived firmware DT, whose actual handoff still needs hardware
+validation. EDK2 applies PCIe/SATA/USB runtime fixups to that DT; a loader-supplied DT may bypass
+firmware processing. The upstream DT ABI permits compatible older DTs with newer kernels, so
+matching every DTB to every kernel generation is not by itself a reason to change loaders. A loader
+change would require its own fixup and rollback validation.
 [EDK2 fixup note](https://github.com/edk2-porting/edk2-rk3588#custom-device-tree-blob-dtb-override-and-overlays),
 [DT ABI](https://docs.kernel.org/devicetree/bindings/ABI.html).
 
@@ -162,9 +161,9 @@ driver would expand kernel and firmware maintenance, so it is not a low-cost def
 ## 4. Keep serial diagnostics; treat Ethernet and accelerator workarounds by exact hardware
 
 The old Plus module's `rootwait` and serial console at `ttyS2,1500000` remain useful and are
-retained. Its `earlycon` is worth keeping as a documented temporary GRUB argument for the first
-hardware boot or an early hang, rather than assuming the normal console captures failures before
-console registration. The upstream board specifies `stdout-path = "serial2:1500000n8"`, which
+retained. Its `earlycon` is worth keeping as a documented temporary boot-entry argument for the
+first hardware boot or an early hang, rather than assuming the normal console captures failures
+before console registration. The upstream board specifies `stdout-path = "serial2:1500000n8"`, which
 supports the intended diagnostic path when the firmware DT preserves it. `consoleblank=0` is a
 screen usability choice, not a performance optimization.
 [Old Plus module](https://github.com/ryan4yin/nixos-rk3588/blob/fc13924f014d9d7961d1865ecaf388ba25d37f14/modules/boards/orangepi5plus.nix),
@@ -251,13 +250,13 @@ build cost.
 [Terminfo module](https://github.com/NixOS/nixpkgs/blob/6510408d147d8c5e6d76043e899e9251756f6a75/nixos/modules/config/terminfo.nix#L39),
 [nix-config SSH module](https://github.com/ryan4yin/nix-config/blob/497fabbf9206d8befe2cd70aeaefb71aea332b96/modules/nixos/base/ssh.nix).
 
-## 7. Preserve explicit input update boundaries
+## 7. Preserve explicit input references and reuse shared patterns
 
-The root nixpkgs and Home Manager use explicit release branches, tagged dependencies keep their
-latest release tags, and revision-pinned shared helpers retain explicit commits. MicroVM and tooling
-nixpkgs retain their separate unstable channels. These choices preserve the repository's existing
-update boundaries rather than removing version references. The Orange Pi board selects
-`linuxPackages_latest` explicitly; it does not inherit nixpkgs' default kernel family.
+Host, MicroVM and tooling package sets use explicit unstable branches; Home Manager tracks its
+explicit master branch. Tagged dependencies retain their latest release tags, and revision-pinned
+shared helpers retain explicit commits. The Orange Pi board selects `linuxPackages_latest` rather
+than the default kernel family. Keep the board-specific delta small so the validated aarch64 hosts
+can return to nix-config after the agreed [stability gate](./orangepi-hardware-validation.md).
 [Input declarations](../flake.nix#L32).
 
 ## Discussion coverage and limits

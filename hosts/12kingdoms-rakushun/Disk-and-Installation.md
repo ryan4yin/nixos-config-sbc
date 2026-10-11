@@ -91,67 +91,11 @@ Caches (sum of all):
   L3:                   3 MiB (1 instance)
 ```
 
-## How to install NixOS on Orange Pi 5 Plus
+## Fresh installation and recovery
 
-### 1. Prepare a USB LUKS key
-
-Generate LUKS keyfile to encrypt the root partition, it's used by disko.
-
-```bash
-# partition the usb stick
-DEV=/dev/sdX
-parted ${DEV} -- mklabel gpt
-parted ${DEV} -- mkpart OPI5P_DSC fat32 0% 512MB
-mkfs.fat -F 32 -n OPI5P_DSC ${DEV}1
-
-# Generate a keyfile from the true random number generator
-KEYFILE=./orangepi5plus-luks-keyfile
-dd bs=512 count=64 iflag=fullblock if=/dev/random of=$KEYFILE
-
-# copy the keyfile and token to the usb stick
-KEYFILE=./orangepi5plus-luks-keyfile
-DEVICE=/dev/disk/by-label/OPI5P_DSC
-# seek=128 skip N obs-sized output blocks to avoid overwriting the filesystem header
-dd bs=512 count=64 iflag=fullblock seek=128 if=$KEYFILE of=$DEVICE
-```
-
-### 2. Partition the SSD & install NixOS via disko
-
-First, read the [current Orange Pi boot requirements](../../README.md#orange-pi-boot-requirements)
-and the [RK3588 EDK2 documentation](https://github.com/edk2-porting/edk2-rk3588) before provisioning
-firmware or booting a NixOS live environment from USB.
-
-Then, run the following commands:
-
-```bash
-# transfer the nix-config to the target machine
-rsync -avzP ~/nix-config rk@<ip-addr>:/home/rk/
-
-# login via ssh
-ssh rk@<ip-addr>
-
-cd ~/nix-config/hosts/12kingdoms_rakushun
-# 1. change the disk device path in ./disko-fs.nix to the disk you want to use
-# 2. partition & format the disk via disko
-sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko -- --mode disko ./disko-fs.nix
-
-
-cd ~/nix-config
-# install nixos
-sudo nixos-install --root /mnt --flake .#rakushun --no-root-password --show-trace --verbose
-
-# enter into the installed system, check password & users
-# `su ryan` => `sudo -i` => enter ryan's password => successfully login
-# if login failed, check the password you set in install-1, and try again
-nixos-enter
-
-# NOTE: DO NOT skip this step!!!
-# copy the essential files into /persistent
-# otherwise the / will be cleared and data will lost
-## NOTE: preservation just bind-mounts / paths from /persistent
-##       We need to copy files into /persistent manually!!!
-mv /etc/machine-id /persistent/etc/
-mv /etc/ssh /persistent/etc/
-mkdir -p /persistent/home/ryan
-chown -R ryan:ryan /persistent/home/ryan
-```
+Both hosts now use the shared
+[Orange Pi 5 Plus installation procedure](../../docs/orangepi-installation.md). It covers official
+live-media validation, verified physical disk selection, the host-specific raw USB unlock key,
+recovery-passphrase enrollment, persistent identity and systemd-boot recovery. Record actual board
+results in the [hardware validation record](../../docs/orangepi-hardware-validation.md). The
+observations above describe an earlier installation; they do not verify the new mainline system.

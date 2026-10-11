@@ -10,10 +10,10 @@ to retrieve research material.
 **Repository audit baseline:** commit `80b739f2058321cc755157ed77fb1f1568cc6204`, before the input
 and OPi migration. Baseline code citations below are pinned to that revision. For the implemented
 configuration and validation scope, see the
-[current README](../README.md#orange-pi-boot-requirements). The OPi implementation retains stock EFI
-GRUB and requires an upstream-derived firmware DT; the packaged kernel DTB is not automatically
-loaded by GRUB. A newer kernel may use an older compatible upstream DT under the
-[stable DT binding ABI](https://docs.kernel.org/devicetree/bindings/ABI.html).
+[current README](../README.md#orange-pi-boot-and-fresh-installation). The OPi implementation uses
+systemd-boot with `installDeviceTree = false` and requires an upstream-derived firmware DT; the
+packaged kernel DTB is not substituted at boot. A newer kernel may use an older compatible upstream
+DT under the [stable DT binding ABI](https://docs.kernel.org/devicetree/bindings/ABI.html).
 
 ## Recommendation
 

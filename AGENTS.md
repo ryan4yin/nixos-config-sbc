@@ -45,8 +45,10 @@ must be on PATH: `nix shell nixpkgs#just nixpkgs#nushell`.
 
 - `hosts/README.md` has the step-by-step. Its `vars/networking.nix` and `vars/username` steps live
   in the **external** `mynixcfg` input, not this repo.
-- Before OPi kernel, loader or firmware changes, read `README.md`'s Orange Pi boot requirements: it
-  explains the EDK2 Mainline DT prerequisite, stock GRUB handoff and vendor-kernel rollback.
+- Before OPi installation, kernel, loader or firmware changes, read `docs/orangepi-installation.md`:
+  it covers live-media validation, raw-key/passphrase enrollment, firmware DT handoff and recovery.
+  For support-state claims or moving hosts back to nix-config, read
+  `docs/orangepi-hardware-validation.md`.
 - `outputs/<system>/src/*.nix` header comment is real: do **not** remove seemingly unused args
   (haumea passes them lazily into `mylib.nixosSystem`/`mylib.colmenaSystem`).
 

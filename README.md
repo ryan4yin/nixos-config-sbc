@@ -13,38 +13,30 @@ See [./hosts](./hosts) for details of each host.
 | `nozomi`, `yukina` | Lichee Pi 4A              | Minimal evaluation compatibility fixes; kernel, system builds and boot remain unverified.      |
 | Milk-V Mars        | JH7110                    | No host configuration is defined here.                                                         |
 
-The Orange Pi hosts use the explicitly selected `nixos-26.05` input and the local
+The Orange Pi hosts use the explicitly selected `nixos-unstable` input and the local
 [`orangepi5plus` module](./nixos/boards/orangepi5plus.nix), with `linuxPackages_latest` rather than
-the default kernel family. Tagged and revision-pinned inputs retain explicit references; MicroVM and
-tooling package sets keep their separate unstable inputs. Boot firmware is provisioned separately
-and is not rebuilt by ordinary system updates.
+the default kernel family. Host, MicroVM and tooling package sets all use unstable; tagged and
+revision-pinned dependencies retain explicit references. Shared configuration follows the relevant
+patterns already used in nix-config, including selective Ghostty/Kitty terminfo.
 
-## Orange Pi boot requirements
+## Orange Pi boot and fresh installation
 
-The existing boot path is EDK2 -> EFI GRUB -> Linux. In EDK2's **ACPI / Device Tree** settings,
-select **Config Table Mode = Device Tree** and **Device Tree Compatibility Mode = Mainline**. Verify
-the installed firmware version and board settings before activation. For the bundled firmware-DT
-path, disable **Support DTB override & overlays**: an earlier installation may have left a vendor
-DTB at the ESP path `dtb/base/rk3588-orangepi-5-plus.dtb`. Selecting Mainline alone does not
-establish that this old override is unused. Retain the old file/settings for recovery; any
-deliberately retained override must be verified as compatible with the mainline kernel.
+The installed boot path is EDK2 -> systemd-boot -> Linux EFI stub. The board explicitly sets
+`installDeviceTree = false`, so the packaged `hardware.deviceTree.name` artifact is not substituted
+for the firmware's Mainline DT. Firmware stays independent of routine system updates.
 
-Stock NixOS GRUB does not load `hardware.deviceTree.name`: that setting selects the DTB built with
-the kernel, while this configuration boots with the DT supplied and fixed up by EDK2. It does not
-promise a different DTB for each GRUB generation. This preserves firmware runtime fixups and avoids
-a local GRUB installer patch. See the
-[EDK2 DT configuration](https://github.com/edk2-porting/edk2-rk3588#device-tree-configuration),
-[DTB override documentation](https://github.com/edk2-porting/edk2-rk3588#custom-device-tree-blob-dtb-override-and-overlays)
-and the [upstream DT ABI](https://docs.kernel.org/devicetree/bindings/ABI.html).
+Use the [fresh installation and recovery procedure](./docs/orangepi-installation.md), including
+verification that the official aarch64 latest-kernel live image actually boots on the board before
+formatting. The procedure records firmware settings, preserves the existing storage/raw USB key
+layout, and requires local enrollment and testing of a recovery passphrase. The configured 10-second
+key timeout cannot create a missing passphrase slot.
 
-The NVMe encryption and USB-key layout are preserved. The board module adds early USB/PHY modules so
-the initrd can discover the key and storage. The systemd initrd uses `keyFileTimeout = 10` to wait
-for the USB key before falling back to a password; the obsolete explicit `fallbackToPassword`
-setting is removed.
-
-Before switching from a vendor DT mode, record the current firmware settings. Booting an old
-vendor-kernel generation may also require restoring its previous firmware DT mode; keeping its GRUB
-entry alone does not establish a working rollback.
+Recovery covers previous mainline generations selected manually from systemd-boot and a verified
+live USB. Old vendor installations have been cleared; preserving their loader/DT behavior is not a
+requirement. Record real board results in the
+[hardware validation record](./docs/orangepi-hardware-validation.md). Source-level differences
+between systemd-boot and Limine are documented in the
+[loader comparison](./docs/opi-efi-loader-comparison.md).
 
 ## Validation
 
@@ -69,11 +61,14 @@ builds and boot remain unverified. aarch64 remains the primary validation target
 verify cold boot, USB-key/password unlock, NVMe, both Ethernet ports, thermal control, and the
 MicroVM on the actual board.
 
-## Why a separate repository for SBCs?
+## Path back to nix-config
 
-The SBC configurations keep their own input lock and board settings so their upgrade and hardware
-validation cycle can be managed independently from `ryan4yin/nix-config`. The current Orange Pi
-configuration uses standard nixpkgs kernels rather than a vendor kernel flake.
+This repository is the aarch64 validation workspace. After both Orange Pi hosts pass physical
+acceptance, run for at least 14 days, and pass two ordinary nixpkgs updates including one kernel
+version upgrade with no unresolved blocking issue, move their small board module and host wiring
+back to nix-config. Keep RISC-V independent until its kernel/build/boot migration is validated. The
+[validation record](./docs/orangepi-hardware-validation.md) tracks that gate; a successful closure
+build alone does not satisfy it.
 
 ## Usage
 
