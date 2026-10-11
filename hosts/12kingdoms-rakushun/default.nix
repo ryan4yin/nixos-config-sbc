@@ -1,13 +1,12 @@
 {
   mylib,
   disko,
-  nixos-rk3588,
   myvars,
   ...
 }:
 #############################################################
 #
-#  Suzu - Orange Pi 5 Plus, RK3588 + 16GB RAM
+#  Rakushun - Orange Pi 5 Plus, RK3588 + 16GB RAM
 #
 #############################################################
 let
@@ -15,8 +14,7 @@ let
 in
 {
   imports = (mylib.scanPaths ./.) ++ [
-    # import the rk3588 module, which contains the configuration for bootloader/kernel/firmware
-    nixos-rk3588.nixosModules.boards.orangepi5plus.core
+    (mylib.relativeToRoot "nixos/boards/orangepi5plus.nix")
     disko.nixosModules.default
   ];
 
@@ -25,7 +23,15 @@ in
     inherit (myvars.networking) nameservers;
     # upstream renamed `defaultGateway` to `proxyGateway`; keep the NixOS option name
     defaultGateway = myvars.networking.proxyGateway;
-    inherit (myvars.networking.hostsInterface.${hostName}) interfaces;
+    interfaces.${myvars.networking.hostsAddr.${hostName}.iface} = {
+      useDHCP = false;
+      ipv4.addresses = [
+        {
+          address = myvars.networking.hostsAddr.${hostName}.ipv4;
+          prefixLength = 24;
+        }
+      ];
+    };
     networkmanager.enable = false;
   };
 

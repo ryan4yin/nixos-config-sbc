@@ -47,7 +47,8 @@
                 # type `cryptsetup --help` to see the compiled-in key and passphrase maximum sizes
                 keyFileSize = 512 * 64; # match the `bs * count` of the `dd` command
                 keyFileOffset = 512 * 128; # match the `bs * skip` of the `dd` command
-                fallbackToPassword = true;
+                # Bound USB key discovery before systemd prompts for a password.
+                keyFileTimeout = 10;
                 allowDiscards = true;
               };
               # Whether to add a boot.initrd.luks.devices entry for the specified disk.

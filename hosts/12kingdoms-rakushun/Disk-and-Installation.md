@@ -117,9 +117,9 @@ dd bs=512 count=64 iflag=fullblock seek=128 if=$KEYFILE of=$DEVICE
 
 ### 2. Partition the SSD & install NixOS via disko
 
-First, follow
-[UEFI - ryan4yin/nixos-rk3588](https://github.com/ryan4yin/nixos-rk3588/blob/main/UEFI.md) to
-install UEFI bootloader and boot into NixOS live environment via a USB stick.
+First, read the [current Orange Pi boot requirements](../../README.md#orange-pi-boot-requirements)
+and the [RK3588 EDK2 documentation](https://github.com/edk2-porting/edk2-rk3588) before provisioning
+firmware or booting a NixOS live environment from USB.
 
 Then, run the following commands:
 
