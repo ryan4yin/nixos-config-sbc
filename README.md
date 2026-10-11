@@ -13,9 +13,11 @@ See [./hosts](./hosts) for details of each host.
 | `nozomi`, `yukina` | Lichee Pi 4A              | Minimal evaluation compatibility fixes; kernel, system builds and boot remain unverified.      |
 | Milk-V Mars        | JH7110                    | No host configuration is defined here.                                                         |
 
-The Orange Pi hosts use the root `nixos-unstable` input and the local
-[`orangepi5plus` module](./nixos/boards/orangepi5plus.nix), with `linuxPackages_latest`. Boot
-firmware is provisioned separately and is not rebuilt by ordinary system updates.
+The Orange Pi hosts use the explicitly selected `nixos-26.05` input and the local
+[`orangepi5plus` module](./nixos/boards/orangepi5plus.nix), with `linuxPackages_latest` rather than
+the default kernel family. Tagged and revision-pinned inputs retain explicit references; MicroVM and
+tooling package sets keep their separate unstable inputs. Boot firmware is provisioned separately
+and is not rebuilt by ordinary system updates.
 
 ## Orange Pi boot requirements
 

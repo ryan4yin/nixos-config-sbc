@@ -16,13 +16,15 @@ fork. The fork is 15 commits ahead of the old input on its own history.
 [Original latest commit](https://github.com/ryan4yin/nixos-rk3588/commit/37ca2142a3c6e99e3a4145d235e1e80928c9195a),
 [fork comparison](https://github.com/ryan4yin/nixos-rk3588/compare/fc13924f014d9d7961d1865ecaf388ba25d37f14...gnull:main).
 
-The mainline baseline is nixpkgs `6510408d147d8c5e6d76043e899e9251756f6a75`, selecting Linux
-**7.2.9**. Current Nix evaluation confirms that version, no explicit host governor override, and
-`hardware.ksm.enable = true` on `suzu`. Its standard kernel configuration requests
-`CPU_FREQ_DEFAULT_GOV_SCHEDUTIL=y`, `KSM=y`, `CGROUPS=y`, `MEMCG=y`, and `CMA_SIZE_MBYTES=32`. These
-are builder configuration requests, not measurements of a running board. The source comparison also
-uses upstream v7.2 DT files and the exact v7.2.9 arm64 defconfig. A generated final `.config` and
-real firmware handoff were not read in this review.
+The initial source-audit baseline was nixpkgs `6510408d147d8c5e6d76043e899e9251756f6a75`, selecting
+Linux **7.2.9**. The implemented release input is now `nixos-26.05` at
+`7c8764b7c7b09b34f632464276218ef9090eaa11`; evaluation confirms its `linuxPackages_latest` is also
+**7.2.9**, while the default family is **6.18.55**. The initial audit confirmed no explicit host
+governor override and `hardware.ksm.enable = true` on `suzu`. Its standard kernel configuration
+requests `CPU_FREQ_DEFAULT_GOV_SCHEDUTIL=y`, `KSM=y`, `CGROUPS=y`, `MEMCG=y`, and
+`CMA_SIZE_MBYTES=32`. These are builder configuration requests, not measurements of a running board.
+The source comparison also uses upstream v7.2 DT files and the exact v7.2.9 arm64 defconfig. A
+generated final `.config` and real firmware handoff were not read in this review.
 [Kernel selection](https://github.com/NixOS/nixpkgs/blob/6510408d147d8c5e6d76043e899e9251756f6a75/pkgs/top-level/linux-kernels.nix),
 [common configuration](https://github.com/NixOS/nixpkgs/blob/6510408d147d8c5e6d76043e899e9251756f6a75/pkgs/os-specific/linux/kernel/common-config.nix),
 [7.2.9 arm64 defconfig](https://github.com/gregkh/linux/blob/v7.2.9/arch/arm64/configs/defconfig).
@@ -234,32 +236,28 @@ Open [PR #17](https://github.com/gnull/nixos-rk3588/pull/17) proposes dropping
 nixos-generators/specialArgs and exporting internal packages. It is unmerged housekeeping for that
 flake, not a missing feature in this repository after removing the dependency.
 
-## 6. Reduce the terminal-database build surface after identifying SSH clients
+## 6. Reuse nix-config's selective terminal databases
 
-The shared [SSH module](../nixos/base/ssh.nix#L26) enables `environment.enableAllTerminfo`. At this
-nixpkgs revision, that option installs terminfo outputs from 13 terminal packages, including
-Contour. Contour's `terminfo` is an output of its full Qt/C++ derivation rather than a separate
-lightweight build. During the migration, its recorded compilation took 11 minutes 25 seconds and
-exposed the GCC 16 SIMD regression now handled by the version-scoped
-[guest compatibility module](../hosts/microvm-mitsuha/contour-compat.nix).
+The [shared SSH module](../nixos/base/ssh.nix) now follows nix-config's existing selection of
+`ghostty.terminfo` and `kitty.terminfo`. It leaves `environment.enableAllTerminfo` disabled. The
+previous all-terminal option pulled terminfo outputs from 13 packages in the investigated nixpkgs
+revision, including Contour's full Qt/C++ build. That build took 11 minutes 25 seconds and exposed a
+GCC 16 SIMD incompatibility during the initial migration.
+
+The selective set removes Contour from Mitsuha's package dependency graph, so its local compiler
+workaround is removed. No new terminfo builder is needed. The selected packages still build under
+their normal nixpkgs recipes; this change reduces unrelated package choices, not every terminal
+build cost.
 [Terminfo module](https://github.com/NixOS/nixpkgs/blob/6510408d147d8c5e6d76043e899e9251756f6a75/nixos/modules/config/terminfo.nix#L39),
-[Contour recipe](https://github.com/NixOS/nixpkgs/blob/6510408d147d8c5e6d76043e899e9251756f6a75/pkgs/by-name/co/contour/package.nix).
+[nix-config SSH module](https://github.com/ryan4yin/nix-config/blob/497fabbf9206d8befe2cd70aeaefb71aea332b96/modules/nixos/base/ssh.nix).
 
-For a small headless VM, identify the actual SSH clients' TERM names before replacing the
-all-terminal option with the required databases. This can remove unrelated terminal build failures
-and may make the Contour workaround unnecessary. Installing a selected terminal's terminfo output
-can still require its full package build; prefer an existing lightweight database where it contains
-the needed entry. Do not remove terminal support without checking interactive SSH and sudo behavior.
-This is a proposed optimization, not a configuration change made by the review.
+## 7. Preserve explicit input update boundaries
 
-## 7. Make the host/guest nixpkgs update boundary deliberate
-
-The root and `nixpkgs-microvm` inputs currently use the same channel and revision, but remain
-separate update controls. A targeted update of only one input can therefore diverge them. If
-separate guest validation is not a deliberate policy, making `nixpkgs-microvm` follow `nixpkgs`
-removes one version choice while retaining separate package imports and guest/host kernel-family
-choices. If independent upgrade staging is useful, keep both and document that policy instead. This
-is not a present build bug and no input was changed for this suggestion.
+The root nixpkgs and Home Manager use explicit release branches, tagged dependencies keep their
+latest release tags, and revision-pinned shared helpers retain explicit commits. MicroVM and tooling
+nixpkgs retain their separate unstable channels. These choices preserve the repository's existing
+update boundaries rather than removing version references. The Orange Pi board selects
+`linuxPackages_latest` explicitly; it does not inherit nixpkgs' default kernel family.
 [Input declarations](../flake.nix#L32).
 
 ## Discussion coverage and limits

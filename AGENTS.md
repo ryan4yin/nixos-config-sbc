@@ -52,10 +52,10 @@ must be on PATH: `nix shell nixpkgs#just nixpkgs#nushell`.
 
 ## Gotchas
 
-- `myvars` and `mylib` come from the external `mynixcfg` input. Its URL tracks upstream and
-  `flake.lock` records the revision; input updates can change its API. OPi networking uses
-  `hostsAddr.<host>.iface` / `.ipv4`, while gateway and SSH keys use `proxyGateway` and
-  `mainSshAuthorizedKeys`. Check these consumers together when updating the input.
+- Preserve explicit release/tag/revision references when updating inputs. `myvars` and `mylib` come
+  from the revision-pinned external `mynixcfg` input; bumping that revision can change its API. OPi
+  networking uses `hostsAddr.<host>.iface` / `.ipv4`, while gateway and SSH keys use `proxyGateway`
+  and `mainSshAuthorizedKeys`. Check these consumers together when updating the input.
 - `nozomi` / `yukina` receive minimal vars-API compatibility fixes and participate in eval CI, but
   their kernel, system builds and boot remain unverified. A later RISC-V migration must verify its
   native/cross kernel package selection and actual hardware.

@@ -113,7 +113,7 @@ in
     system:
     let
       pkgs = nixpkgs.legacyPackages.${system};
-      nixfmt = pkgs.nixfmt;
+      nixfmt = (import inputs.nixpkgs-unstable { inherit system; }).nixfmt;
     in
     {
       # eval-tests per system. `nix flake check` requires every check to be a
@@ -166,7 +166,7 @@ in
     system:
     let
       pkgs = nixpkgs.legacyPackages.${system};
-      nixfmt = pkgs.nixfmt;
+      nixfmt = (import inputs.nixpkgs-unstable { inherit system; }).nixfmt;
     in
     {
       default = pkgs.mkShell {
