@@ -14,11 +14,6 @@
     # depending on how you configured your disk mounts, change this to /boot or /boot/efi.
     efi.efiSysMountPoint = "/boot/";
     efi.canTouchEfiVariables = true;
-    # do not use systemd-boot here, it has problems when running `nixos-install`
-    grub = {
-      device = "nodev";
-      efiSupport = true;
-    };
   };
   # clear /tmp on boot to get a stateless /tmp directory.
   boot.tmp.cleanOnBoot = true;
