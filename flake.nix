@@ -29,23 +29,19 @@
     # There are many ways to reference flake inputs. The most widely used is github:owner/name/reference,
     # which represents the GitHub repository URL + branch/commit-id/tag.
 
-    # Used only as colmena's default nixpkgs, will be overwritten in each host by colmenaMeta.nodeNixpkgs
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
+    # Shared package set for the Orange Pi hosts and deployment tooling.
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     # Used as microvm's nixpkgs
     nixpkgs-microvm.url = "github:nixos/nixpkgs/nixos-unstable";
 
-    # Tooling-only nixpkgs. The RFC 166 `nixfmt` is not in the 24.11 line above
-    # (it only ships the classic nixfmt 0.5.0), so the formatter and dev shell
-    # pull `nixfmt` from here. Nothing from this input reaches the hosts.
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
 
     # nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
     # home-manager, used for managing user configuration
     home-manager = {
-      url = "github:nix-community/home-manager/release-24.11";
-      # url = "github:nix-community/home-manager/release-24.11";
+      url = "github:nix-community/home-manager/master";
 
       # The `follows` keyword in inputs is used for inheritance.
       # Here, `inputs.nixpkgs` of home-manager is kept consistent with the `inputs.nixpkgs` of the current flake,
@@ -61,10 +57,8 @@
     };
 
     # add git hooks to format nix code before commit
-    # NOTE: keep this pinned to a revision compatible with the nixpkgs line above;
-    # newer git-hooks.nix expects packages (e.g. `air-formatter`) absent from 24.11.
     pre-commit-hooks = {
-      url = "github:cachix/git-hooks.nix/9364dc02281ce2d37a1f55b6e51f7c0f65a75f17";
+      url = "github:cachix/git-hooks.nix/a0e4241b51206fbcbf52fd322eb5f0cd80f153c4";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -82,16 +76,11 @@
 
     ########################  My own repositories  #########################################
 
-    # This repo consumes nix-config's `vars/` and shared `lib/`. Pin it to a fixed
-    # revision so `just up` cannot silently change the vars API (e.g. `defaultGateway`
-    # -> `proxyGateway`, `sshAuthorizedKeys` -> `mainSshAuthorizedKeys`).
-    mynixcfg.url = "github:ryan4yin/nix-config/51e6a20617b027c4b10937a8e8ff4ad14084cf9b";
+    # Shared vars and helpers use an explicit upstream revision.
+    mynixcfg.url = "github:ryan4yin/nix-config/497fabbf9206d8befe2cd70aeaefb71aea332b96";
 
     # riscv64 SBCs
     nixos-licheepi4a.url = "github:ryan4yin/nixos-licheepi4a";
     # nixos-jh7110.url = "github:ryan4yin/nixos-jh7110";
-
-    # aarch64 SBCs
-    nixos-rk3588.url = "github:ryan4yin/nixos-rk3588";
   };
 }

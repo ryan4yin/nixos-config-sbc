@@ -10,6 +10,9 @@
 
   preservation.enable = true;
 
+  # The identity is already persistent; committing a transient machine-id would fail on its bind mount.
+  systemd.suppressedSystemUnits = [ "systemd-machine-id-commit.service" ];
+
   environment.systemPackages = [
     # `sudo ncdu -x /`
     pkgs.ncdu
@@ -41,7 +44,11 @@
       "/var/lib"
     ];
     files = [
-      "/etc/machine-id"
+      {
+        file = "/etc/machine-id";
+        # PID 1 must see the persistent identity before stage 2 starts.
+        inInitrd = true;
+      }
     ];
 
     # the following directories will be passed to /persistent/home/$USER

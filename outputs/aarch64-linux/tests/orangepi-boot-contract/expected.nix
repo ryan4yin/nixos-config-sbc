@@ -1,0 +1,4 @@
+{
+  suzu = true;
+  rakushun = true;
+}

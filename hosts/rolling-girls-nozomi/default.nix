@@ -5,7 +5,7 @@
 }:
 #############################################################
 #
-#  Nozomi - NixOS configuration for Lichee Pi 4A
+#  Nozomi - Lichee Pi 4A; kernel and boot remain unverified
 #
 #############################################################
 let
@@ -25,7 +25,15 @@ in
     inherit (myvars.networking) nameservers;
     # upstream renamed `defaultGateway` to `proxyGateway`; keep the NixOS option name
     defaultGateway = myvars.networking.proxyGateway;
-    inherit (myvars.networking.hostsInterface.${hostName}) interfaces;
+    interfaces.${myvars.networking.hostsAddr.${hostName}.iface} = {
+      useDHCP = false;
+      ipv4.addresses = [
+        {
+          address = myvars.networking.hostsAddr.${hostName}.ipv4;
+          prefixLength = 24;
+        }
+      ];
+    };
 
     wireless = {
       # https://wiki.archlinux.org/title/wpa_supplicant

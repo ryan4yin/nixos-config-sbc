@@ -47,14 +47,14 @@
                 # type `cryptsetup --help` to see the compiled-in key and passphrase maximum sizes
                 keyFileSize = 512 * 64; # match the `bs * count` of the `dd` command
                 keyFileOffset = 512 * 128; # match the `bs * skip` of the `dd` command
-                fallbackToPassword = true;
+                # Bound USB key discovery before systemd prompts for a password.
+                keyFileTimeout = 10;
                 allowDiscards = true;
               };
               # Whether to add a boot.initrd.luks.devices entry for the specified disk.
               initrdUnlock = true;
 
-              # encrypt the root partition with luks2 and argon2id, will prompt for a passphrase, which will be used to unlock the partition.
-              # cryptsetup luksFormat
+              # Formatting enrolls only the USB raw key; add and verify a recovery passphrase before first boot.
               extraFormatArgs = [
                 "--type luks2"
                 "--cipher aes-xts-plain64"
