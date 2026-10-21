@@ -67,8 +67,8 @@ resolved path points to the intended NVMe and that neither the installer nor key
 Preview the complete configuration before authorizing destruction. For `rakushun`:
 
 ```console
-nix eval --raw .#nixosConfigurations.rakushun.config.disko.devices.disk.sda.device
-nix run --inputs-from . disko -- --dry-run --mode destroy,format,mount --flake .#rakushun
+nix --extra-experimental-features 'nix-command flakes' eval --raw .#nixosConfigurations.rakushun.config.disko.devices.disk.sda.device
+nix --extra-experimental-features 'nix-command flakes' run --inputs-from . disko -- --dry-run --mode destroy,format,mount --flake .#rakushun
 ```
 
 Use `suzu` in both expressions for the second host. `--inputs-from .` resolves disko from this
@@ -147,7 +147,7 @@ For `rakushun`, identify and verify the encrypted partition before enrollment. C
 reference against the generated configuration and the verified NVMe partition:
 
 ```console
-nix eval --raw .#nixosConfigurations.rakushun.config.boot.initrd.luks.devices.encrypted.device
+nix --extra-experimental-features 'nix-command flakes' eval --raw .#nixosConfigurations.rakushun.config.boot.initrd.luks.devices.encrypted.device
 ls -l /dev/disk/by-partlabel/disk-sda-luks
 ```
 
@@ -164,9 +164,67 @@ passphrase without opening another mapping. For `suzu`, use `OPI5_DSC` and its e
 not pass the new passphrase as an argument or save it to a file. If enrollment or verification
 fails, stop before rebooting; the timeout setting alone is not recovery.
 
-## 6. Install and initialize persistent identity
+## 6. Initialize persistent identity, then install
 
-From the same reviewed checkout and mounted target, install the selected host:
+Before `nixos-install`, prepare a valid machine-id in both the persistent volume and the mounted
+root: the bootloader installer reads `/etc/machine-id`. Run this Bash block only with the confirmed
+installation mounts still present. It preserves an existing valid ID, stops on invalid or
+conflicting IDs, and generates an ID only when neither location contains one. Do not copy the live
+system's ID.
+
+```bash
+sudo bash <<'EOF'
+set -euo pipefail
+persistent=/mnt/persistent/etc/machine-id
+target=/mnt/etc/machine-id
+valid_id() {
+  local id size
+  id=$(<"$1") || return 1
+  size=$(wc -c < "$1") || return 1
+  [[ $size -le 33 && $id =~ ^[0-9a-f]{32}$ && $id != 00000000000000000000000000000000 ]]
+}
+mountpoint -q /mnt
+mountpoint -q /mnt/persistent
+[[ ! -L /mnt/etc && ! -L /mnt/persistent/etc ]]
+install -d -m 0755 /mnt/etc /mnt/persistent/etc
+for file in "$persistent" "$target"; do
+  [[ ! -L "$file" && ( ! -e "$file" || -f "$file" ) ]]
+  if [[ -s "$file" ]] && ! valid_id "$file"; then
+    echo "Invalid existing machine-id at $file; stop and inspect it locally." >&2
+    exit 1
+  fi
+done
+if [[ -s "$persistent" && -s "$target" ]] && ! cmp -s "$persistent" "$target"; then
+  echo "Conflicting target identities; stop without replacing either file." >&2
+  exit 1
+fi
+if mountpoint -q "$target" && [[ ! "$persistent" -ef "$target" ]]; then
+  echo "Unexpected machine-id mount; stop and inspect it locally." >&2
+  exit 1
+fi
+if [[ ! -s "$persistent" ]]; then
+  if [[ -s "$target" ]]; then
+    cp "$target" "$persistent"
+  else
+    systemd-machine-id-setup --root=/mnt/persistent
+  fi
+fi
+valid_id "$persistent"
+if [[ ! "$persistent" -ef "$target" ]]; then
+  touch "$target"
+  mount --bind "$persistent" "$target"
+fi
+cmp -s "$persistent" "$target"
+EOF
+```
+
+`--root=/mnt/persistent` confines initialization to the target, including any existing D-Bus ID
+there; it does not reuse the live system's identity. Leave the bind mount in place through
+installation. On subsequent boots, preservation mounts this same file in the initrd before PID1 uses
+it.
+[systemd initialization behavior](https://github.com/systemd/systemd/blob/v261.3/src/shared/machine-id-setup.c).
+
+From the same reviewed checkout, install the selected host:
 
 ```console
 sudo nixos-install --root /mnt --flake .#rakushun --no-root-password
@@ -177,14 +235,13 @@ provision board firmware. Verify the ESP contains the ARM64 EFI loader, current 
 and initrd. Entries must not include a `devicetree` override, and the selected firmware must supply
 the Mainline DT. Preserve a verified live USB as the repair medium.
 
-Before the first reboot, initialize the identity required by the configured preservation paths.
-Review `/mnt/etc/machine-id`, `/mnt/etc/ssh` and their persistent counterparts locally. If the
-installer generated them outside `/mnt/persistent`, move them to the configured persistent locations
-only after confirming that those destinations do not contain identities to preserve. Do not print or
-copy private SSH key contents into notes. Preserve ownership and permissions. Verify that the
-configured user's home and login/authentication method are usable and persistent. The source of
-truth is each host's preservation module; a tmpfs root cannot retain unpreserved installer-created
-files across reboot.
+Before the first reboot, review `/mnt/etc/ssh` and its persistent counterpart locally. If the
+installer generated SSH identities outside `/mnt/persistent`, move them to the configured persistent
+location only after confirming that it contains no identities to preserve. Do not print or copy
+private SSH key contents into notes. Preserve ownership and permissions. Verify that the configured
+user's home and login/authentication method are usable and persistent. The source of truth is each
+host's preservation module; a tmpfs root cannot retain unpreserved installer-created files across
+reboot.
 
 ## 7. Validate startup, recovery and daily operation
 
